@@ -8,8 +8,8 @@
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="89dp"
-        android:layout_height="89dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:max="500"
         android:progress="0"
         android:progressDrawable="@drawable/circular"
@@ -20,11 +20,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
-        android:layout_marginTop="87dp"
+        android:text="Start"
+        android:id="@+id/startButton"
         android:layout_below="@+id/progressBar"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        android:id="@+id/stopButton"
+        android:layout_below="@+id/startButton"
+        android:layout_alignLeft="@+id/startButton"
+        android:layout_alignStart="@+id/startButton" />
 
 
 </RelativeLayout>

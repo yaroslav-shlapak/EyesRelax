@@ -6,7 +6,9 @@ import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 
@@ -16,6 +18,7 @@ public class MainActivity extends ActionBarActivity {
 
     private ProgressBar mProgress;
     private int mProgressStatus = 0;
+    ObjectAnimator animation;
 
     private Handler mHandler = new Handler();
 
@@ -23,11 +26,35 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        Button startButton = (Button) findViewById(R.id.startButton);
+        Button stopButton = (Button) findViewById(R.id.stopButton);
+
+
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
-        ObjectAnimator animation = ObjectAnimator.ofInt(mProgress, "progress", 0, 500);
-        animation.setDuration(5000); //in milliseconds
+        animation = ObjectAnimator.ofInt(mProgress, "progress", 1, 500);
+        animation.setDuration(120000); //in milliseconds
         animation.setInterpolator(new DecelerateInterpolator());
-        animation.start();
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animation.start();
+            }
+        });
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(animation != null) {
+                    animation.end();
+                }
+                if(mProgress != null) {
+                    mProgress.setProgress(0);
+                }
+            }
+        });
 
 /*        mProgress = (ProgressBar) findViewById(R.id.yourId);
 
