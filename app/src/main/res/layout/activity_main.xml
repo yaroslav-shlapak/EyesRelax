@@ -1,53 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="89dp"
+        android:layout_height="89dp"
+        android:max="500"
+        android:progress="0"
+        android:progressDrawable="@drawable/circular"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:indeterminate="false" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Button"
         android:id="@+id/button"
-        android:layout_marginTop="113dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignRight="@+id/button2"
-        android:layout_alignEnd="@+id/button2" />
-    <Button
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@drawable/round_button"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#fff"
-
-        android:id="@+id/button2"
-        android:layout_below="@+id/textView"
+        android:layout_marginTop="87dp"
+        android:layout_below="@+id/progressBar"
         android:layout_centerHorizontal="true" />
 
-
-    <at.markushi.ui.CircleButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/red_circle"
-        app:cb_color="#99CC00"
-        app:cb_pressedRingWidth="8dip"
-        android:layout_marginBottom="40dp"
-        android:layout_above="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/circle_button" />
 
 </RelativeLayout>

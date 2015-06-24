@@ -1,19 +1,61 @@
 package com.voidgreen.eyesrelax;
 
-import android.support.v7.app.ActionBarActivity;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.eyesrelax.yshlapak.eyesrelax.R;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ProgressBar;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private static final int PROGRESS = 0x1;
+
+    private ProgressBar mProgress;
+    private int mProgressStatus = 0;
+
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mProgress = (ProgressBar) findViewById(R.id.progressBar);
+        ObjectAnimator animation = ObjectAnimator.ofInt(mProgress, "progress", 0, 500);
+        animation.setDuration(5000); //in milliseconds
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+
+/*        mProgress = (ProgressBar) findViewById(R.id.yourId);
+
+        // Start lengthy operation in a background thread
+        new Thread(new Runnable() {
+            public void run() {
+                while (mProgressStatus < 100) {
+                    mProgressStatus = doWork(mProgressStatus);
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Update the progress bar
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            mProgress.setProgress(mProgressStatus);
+                        }
+                    });
+                }
+            }
+        }).start();*/
+    }
+
+    private int doWork(int mProgressStatus) {
+        return mProgressStatus >= 100 ? 0 : mProgressStatus++;
     }
 
 
