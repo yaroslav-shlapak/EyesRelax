@@ -1,4 +1,4 @@
-package com.eyesrelax.yshlapak.eyesrelax;
+package com.voidgreen.eyesrelax;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
