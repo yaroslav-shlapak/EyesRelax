@@ -4,5 +4,11 @@
     <string name="app_name">EyesRelax</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="pref_key_relax_period">relax period</string>
+    <string name="pref_key_work_period">work period</string>
+    <string name="pref_title_relax_period">Relax period</string>
+    <string name="pref_title_work_period">Work period</string>
+    <string name="pref_key_start_on_boot">start on boot</string>
+    <string name="pref_title_start_on_boot">Start on boot</string>
 
 </resources>
