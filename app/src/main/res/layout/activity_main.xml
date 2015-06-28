@@ -1,38 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:max="500"
-        android:progress="0"
-        android:progressDrawable="@drawable/circular"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:indeterminate="false" />
+    android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/startButton"
-        android:layout_below="@+id/progressBar"
-        android:layout_centerHorizontal="true" />
+    <fragment
+        android:name="com.voidgreen.eyesrelax.ProgressFragment"
+        android:id="@+id/progressFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+    </fragment>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop"
-        android:id="@+id/stopButton"
-        android:layout_below="@+id/startButton"
-        android:layout_alignLeft="@+id/startButton"
-        android:layout_alignStart="@+id/startButton" />
+    <FrameLayout
+        android:id="@+id/buttonsFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+    </FrameLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

@@ -16,13 +16,7 @@ import android.widget.ProgressBar;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final int PROGRESS = 0x1;
 
-    private ProgressBar mProgress;
-    private int mProgressStatus = 0;
-    ObjectAnimator animation;
-
-    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,64 +24,30 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
 
-        Button startButton = (Button) findViewById(R.id.startButton);
-        Button stopButton = (Button) findViewById(R.id.stopButton);
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.buttonsFrame) != null) {
 
-
-        mProgress = (ProgressBar) findViewById(R.id.progressBar);
-        animation = ObjectAnimator.ofInt(mProgress, "progress", 1, 500);
-        animation.setDuration(120000); //in milliseconds
-        animation.setInterpolator(new DecelerateInterpolator());
-
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animation.start();
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
             }
-        });
 
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(animation != null) {
-                    animation.end();
-                }
-                if(mProgress != null) {
-                    mProgress.setProgress(0);
-                }
-            }
-        });
+            // Create a new Fragment to be placed in the activity layout
+            StartButtonFragment firstFragment = new StartButtonFragment();
 
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            //firstFragment.setArguments(getIntent().getExtras());
 
-
-/*        mProgress = (ProgressBar) findViewById(R.id.yourId);
-
-        // Start lengthy operation in a background thread
-        new Thread(new Runnable() {
-            public void run() {
-                while (mProgressStatus < 100) {
-                    mProgressStatus = doWork(mProgressStatus);
-
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    // Update the progress bar
-                    mHandler.post(new Runnable() {
-                        public void run() {
-                            mProgress.setProgress(mProgressStatus);
-                        }
-                    });
-                }
-            }
-        }).start();*/
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.buttonsFrame, firstFragment).commit();
+        }
     }
 
-    private int doWork(int mProgressStatus) {
-        return mProgressStatus >= 100 ? 0 : mProgressStatus++;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
