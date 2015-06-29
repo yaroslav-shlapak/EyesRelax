@@ -10,5 +10,9 @@
     <string name="pref_title_work_period">Work period</string>
     <string name="pref_key_start_on_boot">start on boot</string>
     <string name="pref_title_start_on_boot">Start on boot</string>
+    <string name="serviceTask">serviceTask</string>
+    <string name="startTask">start</string>
+    <string name="pauseTask">pause</string>
+    <string name="stopTask">stop</string>
 
 </resources>
