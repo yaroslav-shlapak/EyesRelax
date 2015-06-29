@@ -7,6 +7,9 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 
+import com.voidgreen.eyesrelax.preferences.NumberPickerRelaxPreference;
+import com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference;
+
 /**
  * Created by y.shlapak on Jun 25, 2015.
  */

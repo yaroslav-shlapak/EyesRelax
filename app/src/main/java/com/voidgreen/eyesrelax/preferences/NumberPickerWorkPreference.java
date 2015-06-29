@@ -1,4 +1,4 @@
-package com.voidgreen.eyesrelax;
+package com.voidgreen.eyesrelax.preferences;
 
 import android.content.Context;
 import android.util.AttributeSet;

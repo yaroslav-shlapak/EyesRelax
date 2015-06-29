@@ -1,6 +1,7 @@
-package com.voidgreen.eyesrelax;
+package com.voidgreen.eyesrelax.utilities;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 
@@ -12,9 +13,10 @@ public class AnimationProgressBarUtility {
 
     private static ObjectAnimator objectAnimator;
 
-    public static void initAnimation(ProgressBar progressBar) {
-        objectAnimator = ObjectAnimator.ofInt(progressBar, "progress", 1, 500);
-        objectAnimator.setDuration(120000); //in milliseconds
+    public static void initAnimation(ProgressBar progressBar, Context context) {
+        objectAnimator = ObjectAnimator.ofInt(progressBar, "progress", 1, 100);
+        objectAnimator.setDuration(SettingsDataUtility.getRelaxTime(context)); //in milliseconds
+        objectAnimator.setupStartValues();
         objectAnimator.setInterpolator(new DecelerateInterpolator());
     }
 
@@ -33,6 +35,13 @@ public class AnimationProgressBarUtility {
     public static void pause() {
         if(objectAnimator != null) {
             objectAnimator.pause();
+        }
+    }
+
+    public static void setProgress() {
+        if(objectAnimator != null) {
+            //objectAnimator.setIntValues(100, 500);
+            start();
         }
     }
 

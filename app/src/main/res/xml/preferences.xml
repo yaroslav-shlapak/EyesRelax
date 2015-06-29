@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="TIME SETTINGS">
-        <com.voidgreen.eyesrelax.NumberPickerRelaxPreference
+        <com.voidgreen.eyesrelax.preferences.NumberPickerRelaxPreference
             android:defaultValue="0"
             android:key="@string/pref_key_relax_period"
             android:summary="Break time"
             android:title="@string/pref_title_relax_period" />
-        <com.voidgreen.eyesrelax.NumberPickerWorkPreference
+        <com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference
             alphaSlider="true"
             android:defaultValue="0"
             android:key="@string/pref_key_work_period"

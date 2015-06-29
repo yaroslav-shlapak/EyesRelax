@@ -1,21 +1,20 @@
 package com.voidgreen.eyesrelax;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
-import android.widget.ProgressBar;
+
+import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
+import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
 
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends ActionBarActivity
+        implements StartButtonFragment.OnStartButtonClickListener,
+                    PauseStopButtonsFragment.OnStopButtonClickListener{
 
 
     @Override
@@ -35,17 +34,42 @@ public class MainActivity extends ActionBarActivity {
                 return;
             }
 
-            // Create a new Fragment to be placed in the activity layout
-            StartButtonFragment firstFragment = new StartButtonFragment();
+            setStartButtonFragment();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            //firstFragment.setArguments(getIntent().getExtras());
-
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.buttonsFrame, firstFragment).commit();
         }
+    }
+
+    public void setStartButtonFragment() {
+        // Create a new Fragment to be placed in the activity layout
+        Fragment fragment = new StartButtonFragment();
+        int fragmentId = R.id.buttonsFrame;
+
+        replaceFragment(fragment, fragmentId);
+    }
+
+    public void setPauseStopButtonFragment() {
+        // Create a new Fragment to be placed in the activity layout
+        Fragment fragment = new PauseStopButtonsFragment();
+        int fragmentId = R.id.buttonsFrame;
+
+        replaceFragment(fragment, fragmentId);
+    }
+
+    public void setFragment(Fragment fragment, int fragmentId) {
+        // In case this activity was started with special instructions from an
+        // Intent, pass the Intent's extras to the fragment as arguments
+        //firstFragment.setArguments(getIntent().getExtras());
+
+        // Add the fragment to the 'fragment_container' FrameLayout
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(fragmentId, fragment).commit();
+    }
+
+    public void replaceFragment(Fragment fragment, int fragmentId) {
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(fragmentId, fragment).commit();
     }
 
 
@@ -72,6 +96,13 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    @Override
+    public void onStartButtonClick() {
+        setPauseStopButtonFragment();
+    }
 
-
+    @Override
+    public void onStopButtonClick() {
+        setStartButtonFragment();
+    }
 }

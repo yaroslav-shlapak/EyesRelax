@@ -1,11 +1,15 @@
-package com.voidgreen.eyesrelax;
+package com.voidgreen.eyesrelax.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
+import com.voidgreen.eyesrelax.utilities.AnimationProgressBarUtility;
+import com.voidgreen.eyesrelax.R;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -21,9 +25,10 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Activity activity = getActivity();
 
-        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
-        AnimationProgressBarUtility.initAnimation(progressBar);
+        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressBar);
+        AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
 
     }
 }
