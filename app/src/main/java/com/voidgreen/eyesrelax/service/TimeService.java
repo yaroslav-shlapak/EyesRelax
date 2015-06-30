@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
+import com.voidgreen.eyesrelax.utilities.Utility;
 
 /**
  * Created by Void on 29-Jun-15.
@@ -19,7 +20,7 @@ public class TimeService extends IntentService {
 
 
     public TimeService() {
-        super("TimeService");
+        super(TimeService.class.getName());
     }
 
 
@@ -32,10 +33,12 @@ public class TimeService extends IntentService {
 
         switch (task) {
             case "start":
-                timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context), 1000);
+                Utility.showToast(context, "onHandleIntent:start");
+                timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000);
                 break;
 
             case "stop":
+                Utility.showToast(context, "onHandleIntent:stop");
                 if (timer != null) {
                     timer.cancel();
                 }
@@ -65,6 +68,8 @@ public class TimeService extends IntentService {
         @Override
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
+            Utility.showToast(getApplicationContext(), "onTick: " +  millisUntilFinished);
+
             localIntent.putExtra(Constants.EXTENDED_DATA_STATUS, millisUntilFinished);
             // Broadcasts the Intent to receivers in this app.
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);

@@ -2,6 +2,7 @@ package com.voidgreen.eyesrelax;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +11,8 @@ import android.view.MenuItem;
 
 import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
 import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
+import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Constants;
 
 
 public class MainActivity extends ActionBarActivity
@@ -37,6 +40,20 @@ public class MainActivity extends ActionBarActivity
             setStartButtonFragment();
 
         }
+
+        // The filter's action is BROADCAST_ACTION
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                Constants.BROADCAST_ACTION);
+
+        // Adds a data filter for the HTTP scheme
+        mStatusIntentFilter.addDataScheme("http");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Intent intent = new Intent(this, TimeService.class);
+        this.stopService(intent);
     }
 
     public void setStartButtonFragment() {
@@ -105,4 +122,6 @@ public class MainActivity extends ActionBarActivity
     public void onStopButtonClick() {
         setStartButtonFragment();
     }
+
+
 }

@@ -2,14 +2,21 @@ package com.voidgreen.eyesrelax.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import com.voidgreen.eyesrelax.utilities.AnimationProgressBarUtility;
 import com.voidgreen.eyesrelax.R;
+import com.voidgreen.eyesrelax.utilities.AnimationProgressBarUtility;
+import com.voidgreen.eyesrelax.utilities.Constants;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -31,4 +38,30 @@ public class ProgressFragment extends Fragment {
         AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
 
     }
+
+    @Override
+    public void onResume() {
+        // Register to receive messages.
+        // We are registering an observer (mMessageReceiver) to receive Intents
+        // with actions named "custom-event-name".
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
+                mMessageReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            // Get extra data included in the Intent
+            long message = intent.getLongExtra(Constants.EXTENDED_DATA_STATUS, -1);
+            TextView textView = (TextView) getActivity().findViewById(R.id.textView);
+            textView.setText(Long.toString(message));
+        }
+    };
 }

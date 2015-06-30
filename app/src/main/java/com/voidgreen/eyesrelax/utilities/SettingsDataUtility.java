@@ -22,7 +22,7 @@ public class SettingsDataUtility {
     public static int getWorkTime(Context context) {
         Resources resources = context.getResources();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return sharedPreferences.getInt(resources.getString(R.string.pref_key_start_on_boot), DEFAULT);
+        return sharedPreferences.getInt(resources.getString(R.string.pref_key_work_period), DEFAULT);
     }
 
 }

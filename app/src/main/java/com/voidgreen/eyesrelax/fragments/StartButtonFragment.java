@@ -4,7 +4,6 @@ package com.voidgreen.eyesrelax.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -46,16 +45,18 @@ public class StartButtonFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        final Button startButton = (Button) getActivity().findViewById(R.id.startButton);
+        final Activity activity = getActivity();
+
+        final Button startButton = (Button) activity.findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //AnimationProgressBarUtility.start();
 
                 Resources resources = getResources();
-                Intent intent = new Intent(getActivity(), TimeService.class);
+                Intent intent = new Intent(activity, TimeService.class);
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.startTask));
-                getActivity().startService(intent);
+                activity.startService(intent);
 
                 startButtonCallBack.onStartButtonClick();
             }
