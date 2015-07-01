@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +16,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.voidgreen.eyesrelax.R;
-import com.voidgreen.eyesrelax.utilities.AnimationProgressBarUtility;
 import com.voidgreen.eyesrelax.utilities.Constants;
 
 /**
  * Created by Void on 28-Jun-15.
  */
 public class ProgressFragment extends Fragment {
+    TextView textView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,7 +36,8 @@ public class ProgressFragment extends Fragment {
         Activity activity = getActivity();
 
         ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressBar);
-        AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
+        textView = (TextView) activity.findViewById(R.id.textView);
+        //AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
 
     }
 
@@ -59,8 +61,9 @@ public class ProgressFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
             // Get extra data included in the Intent
+            Log.d("BroadcastReceiver", "onReceive");
             long message = intent.getLongExtra(Constants.EXTENDED_DATA_STATUS, -1);
-            TextView textView = (TextView) getActivity().findViewById(R.id.textView);
+
             textView.setText(Long.toString(message));
         }
     };
