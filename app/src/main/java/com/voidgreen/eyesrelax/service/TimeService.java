@@ -2,6 +2,7 @@ package com.voidgreen.eyesrelax.service;
 
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,22 +21,10 @@ public class TimeService extends Service {
     MyTimer timer;
 
 
-    public TimeService() {
-        super(TimeService.class.getName());
-    }
-
-
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (timer != null) {
-            Log.d("onHandleIntent", "onDestroy:stopTimer");
-            timer.stop();
-        }
-    }
+    public void onCreate() {
+        super.onCreate();
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
         Resources resources = getResources();
         String task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         Context context = getApplicationContext();
@@ -61,6 +50,16 @@ public class TimeService extends Service {
                 break;
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            Log.d("onHandleIntent", "onDestroy:stopTimer");
+            timer.stop();
+        }
+    }
+
 
     private class EyesRelaxCountDownTimer extends CountDownTimer {
         Intent localIntent;
