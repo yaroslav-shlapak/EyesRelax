@@ -12,36 +12,46 @@ import android.util.Log;
 
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
+import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
 
 /**
  * Created by Void on 29-Jun-15.
  */
 public class TimeService extends Service {
-    MyTimer timer;
+    EyesRelaxCountDownTimer timer;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        Resources resources = getResources();
-        String task = intent.getStringExtra(resources.getString(R.string.serviceTask));
-        Context context = getApplicationContext();
+    }
 
-        //Utility.showToast(context, "onHandleIntent");
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Resources resources = getResources();
+        Context context = getApplicationContext();
+        String task = "";
+        if (intent !=null && intent.getExtras()!=null) {
+            task = intent.getStringExtra(resources.getString(R.string.serviceTask));z
+        }
         Log.d("onHandleIntent", "onHandleIntent");
         switch (task) {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
                 Log.d("onHandleIntent", "onHandleIntent:start");
-                timer = new MyTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000);
+                timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000);
                 timer.start();
 
                 break;
 
             case "pause":
-                timer.pause();
+                try {
+                    timer.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             default:
@@ -49,6 +59,9 @@ public class TimeService extends Service {
                 Log.d("onHandleIntent", "onHandleIntent:default");
                 break;
         }
+
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -61,7 +74,7 @@ public class TimeService extends Service {
     }
 
 
-    private class EyesRelaxCountDownTimer extends CountDownTimer {
+    private class EyesRelaxCountDownTimer extends CountDownTimerWithPause {
         Intent localIntent;
 
         /**

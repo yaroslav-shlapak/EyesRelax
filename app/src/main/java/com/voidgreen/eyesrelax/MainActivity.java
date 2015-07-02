@@ -17,11 +17,12 @@ import android.view.MenuItem;
 import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
 import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
 import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Constants;
 
 
 public class MainActivity extends ActionBarActivity
         implements StartButtonFragment.OnStartButtonClickListener,
-                    PauseStopButtonsFragment.OnStopButtonClickListener{
+        PauseStopButtonsFragment.OnStopButtonClickListener {
 
 
     @Override
@@ -124,7 +125,7 @@ public class MainActivity extends ActionBarActivity
                         .setSmallIcon(R.drawable.eye_white_open_hole)
                         .setContentTitle("My notification")
                         .setContentText("Hello World!");
-// Creates an explicit intent for an Activity in your app
+        // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
         Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eye_white_open_hole),
@@ -133,14 +134,14 @@ public class MainActivity extends ActionBarActivity
                 true);
         mBuilder.setLargeIcon(bm);
         mBuilder.setOngoing(true);
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
+        // Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(MainActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
+        // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
@@ -150,9 +151,8 @@ public class MainActivity extends ActionBarActivity
         mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-        int mId = 101;
-        mNotificationManager.notify(mId, mBuilder.build());
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
     }
 
 
