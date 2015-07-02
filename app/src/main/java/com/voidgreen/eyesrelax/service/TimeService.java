@@ -16,7 +16,7 @@ import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
 /**
  * Created by Void on 29-Jun-15.
  */
-public class TimeService extends IntentService {
+public class TimeService extends Service {
     MyTimer timer;
 
 
