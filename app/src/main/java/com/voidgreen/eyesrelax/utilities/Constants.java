@@ -13,4 +13,6 @@ public final class Constants {
     public static final String EXTENDED_DATA_STATUS =
             "com.voidgreen.eyesrelax.STATUS";
 
+    public static final int NOTIFICATION_ID = 101;
+
 }

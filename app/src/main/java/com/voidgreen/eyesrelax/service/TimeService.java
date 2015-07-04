@@ -2,6 +2,7 @@ package com.voidgreen.eyesrelax.service;
 
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,19 +12,57 @@ import android.util.Log;
 
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
+import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
 
 /**
  * Created by Void on 29-Jun-15.
  */
 public class TimeService extends Service {
-    MyTimer timer;
+    EyesRelaxCountDownTimer timer;
 
 
-    public TimeService() {
-        super(TimeService.class.getName());
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Resources resources = getResources();
+        Context context = getApplicationContext();
+        String task = "";
+        if (intent !=null && intent.getExtras()!=null) {
+            task = intent.getStringExtra(resources.getString(R.string.serviceTask));z
+        }
+        Log.d("onHandleIntent", "onHandleIntent");
+        switch (task) {
+            case "start":
+                //Utility.showToast(context, "onHandleIntent:start");
+                Log.d("onHandleIntent", "onHandleIntent:start");
+                timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000);
+                timer.start();
+
+                break;
+
+            case "pause":
+                try {
+                    timer.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            default:
+                //Utility.showToast(context, "onHandleIntent:default");
+                Log.d("onHandleIntent", "onHandleIntent:default");
+                break;
+        }
+
+
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     @Override
     public void onDestroy() {
@@ -34,35 +73,8 @@ public class TimeService extends Service {
         }
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        Resources resources = getResources();
-        String task = intent.getStringExtra(resources.getString(R.string.serviceTask));
-        Context context = getApplicationContext();
 
-        //Utility.showToast(context, "onHandleIntent");
-        Log.d("onHandleIntent", "onHandleIntent");
-        switch (task) {
-            case "start":
-                //Utility.showToast(context, "onHandleIntent:start");
-                Log.d("onHandleIntent", "onHandleIntent:start");
-                timer = new MyTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000);
-                timer.start();
-
-                break;
-
-            case "pause":
-                timer.pause();
-                break;
-
-            default:
-                //Utility.showToast(context, "onHandleIntent:default");
-                Log.d("onHandleIntent", "onHandleIntent:default");
-                break;
-        }
-    }
-
-    private class EyesRelaxCountDownTimer extends CountDownTimer {
+    private class EyesRelaxCountDownTimer extends CountDownTimerWithPause {
         Intent localIntent;
 
         /**
