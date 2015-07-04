@@ -3,6 +3,7 @@ package com.voidgreen.eyesrelax.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -65,6 +66,11 @@ public class PauseStopButtonsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //AnimationProgressBarUtility.pause();
+                Resources resources = getResources();
+                Intent intent = new Intent(activity, TimeService.class);
+                intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.pauseTask));
+                activity.startService(intent);
+                Log.d("PauseStop", "pauseTimer");
             }
         });
     }

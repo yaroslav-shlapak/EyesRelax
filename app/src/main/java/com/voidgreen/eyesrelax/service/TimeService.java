@@ -1,15 +1,23 @@
 package com.voidgreen.eyesrelax.service;
 
 
-import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.CountDownTimer;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
@@ -25,6 +33,7 @@ public class TimeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        createNotification();
 
     }
 
@@ -34,24 +43,30 @@ public class TimeService extends Service {
         Context context = getApplicationContext();
         String task = "";
         if (intent !=null && intent.getExtras()!=null) {
-            task = intent.getStringExtra(resources.getString(R.string.serviceTask));z
+            task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
-        Log.d("onHandleIntent", "onHandleIntent");
+        Log.d("onStartCommand", "onHandleIntent");
         switch (task) {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
-                Log.d("onHandleIntent", "onHandleIntent:start");
-                timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000);
-                timer.start();
+                Log.d("onStartCommand", "start");
+                if(timer == null) {
+                    timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000, true);
+                    timer.create();
+                }
+                timer.resume();
 
                 break;
 
             case "pause":
-                try {
-                    timer.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+                Log.d("onStartCommand", "pause");
+                timer.pause();
+                break;
+
+            case "stop":
+                timer.cancel();
+                Log.d("onStartCommand", "cancel");
                 break;
 
             default:
@@ -68,25 +83,24 @@ public class TimeService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (timer != null) {
-            Log.d("onHandleIntent", "onDestroy:stopTimer");
-            timer.stop();
+            Log.d("onDestroy", "cancelTimer");
+            timer.cancel();
         }
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
 
     private class EyesRelaxCountDownTimer extends CountDownTimerWithPause {
         Intent localIntent;
 
-        /**
-         * @param millisInFuture    The number of millis in the future from the call
-         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
-         *                          is called.
-         * @param countDownInterval The interval along the way to receive
-         *                          {@link #onTick(long)} callbacks.
-         */
-        public EyesRelaxCountDownTimer(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-            localIntent = new Intent(Constants.BROADCAST_ACTION);
+        public EyesRelaxCountDownTimer(long millisOnTimer, long countDownInterval, boolean runAtStart) {
+            super(millisOnTimer, countDownInterval, runAtStart);
+            this.localIntent = new Intent(Constants.BROADCAST_ACTION);
         }
 
 
@@ -108,58 +122,42 @@ public class TimeService extends Service {
         }
     }
 
-    private class MyTimer {
-        public int getTimerLength() {
-            return timerLength;
-        }
+    public void createNotification() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.eye_white_open)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
 
-        public void setTimerLength(int timerLength) {
-            this.timerLength = timerLength;
-        }
+        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eye_white_open),
+                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
+                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
+                true);
+        mBuilder.setLargeIcon(bm);
+        mBuilder.setOngoing(true);
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        Notification notification = mBuilder.build();
+        mNotificationManager.notify(Constants.NOTIFICATION_ID, notification);
 
-        public int getInterval() {
-            return interval;
-        }
-
-        public void setInterval(int interval) {
-            this.interval = interval;
-        }
-
-        public MyTimer(int timerLength, int interval) {
-            this.timerLength = timerLength;
-            this.interval = interval;
-        }
-
-        private int timerLength;
-        private int interval;
-
-        public void start() {
-
-        }
-
-        public void pause() {
-
-        }
-
-        public void stop() {
-
-        }
-
-        /**
-         * Callback fired on regular interval.
-         * @param millisUntilFinished The amount of time until finished.
-         */
-        public void onTick(int millisUntilFinished) {
-
-        }
-
-        /**
-         * Callback fired when the time is up.
-         */
-        public  void onFinish() {
-
-        }
-
-
+        startForeground(Constants.NOTIFICATION_ID, notification);
     }
 }
