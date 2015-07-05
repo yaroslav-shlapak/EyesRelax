@@ -28,6 +28,7 @@ import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
  */
 public class TimeService extends Service {
     EyesRelaxCountDownTimer timer;
+    NotificationCompat.Builder notificationBuilder;
 
 
     @Override
@@ -51,7 +52,7 @@ public class TimeService extends Service {
                 //Utility.showToast(context, "onHandleIntent:start");
                 Log.d("onStartCommand", "start");
                 if(timer == null) {
-                    timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 5000, true);
+                    timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000  , true);
                     timer.create();
                 }
                 timer.resume();
@@ -113,6 +114,8 @@ public class TimeService extends Service {
             localIntent.putExtra(Constants.EXTENDED_DATA_STATUS, millisUntilFinished);
             // Broadcasts the Intent to receivers in this app.
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
+            notificationBuilder.setContentText(Long.toString(millisUntilFinished));
+            startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
 
         }
 
@@ -123,11 +126,11 @@ public class TimeService extends Service {
     }
 
     public void createNotification() {
-        NotificationCompat.Builder mBuilder =
+        notificationBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.eye_white_open)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle("Time to relax")
+                        .setContentText("00:00:00");
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
@@ -135,8 +138,8 @@ public class TimeService extends Service {
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
                 true);
-        mBuilder.setLargeIcon(bm);
-        mBuilder.setOngoing(true);
+        notificationBuilder.setLargeIcon(bm);
+        notificationBuilder.setOngoing(true);
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
@@ -151,11 +154,11 @@ public class TimeService extends Service {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
+        notificationBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
-        Notification notification = mBuilder.build();
+        Notification notification = notificationBuilder.build();
         mNotificationManager.notify(Constants.NOTIFICATION_ID, notification);
 
         startForeground(Constants.NOTIFICATION_ID, notification);
