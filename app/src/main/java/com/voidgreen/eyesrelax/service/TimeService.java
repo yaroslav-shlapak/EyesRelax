@@ -23,6 +23,10 @@ import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Void on 29-Jun-15.
  */
@@ -61,18 +65,22 @@ public class TimeService extends Service {
 
             case "pause":
 
-                Log.d("onStartCommand", "pause");
-                timer.pause();
+                if(timer != null) {
+                    Log.d("onStartCommand", "pause");
+                    timer.pause();
+                }
                 break;
 
             case "stop":
-                timer.cancel();
-                Log.d("onStartCommand", "cancel");
+                if(timer != null) {
+                    timer.cancel();
+                    Log.d("onStartCommand", "cancel");
+                }
                 break;
 
             default:
                 //Utility.showToast(context, "onHandleIntent:default");
-                Log.d("onHandleIntent", "onHandleIntent:default");
+                Log.d("onStartCommand", "default");
                 break;
         }
 
@@ -108,13 +116,14 @@ public class TimeService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
-
+r
             Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
 
             localIntent.putExtra(Constants.EXTENDED_DATA_STATUS, millisUntilFinished);
             // Broadcasts the Intent to receivers in this app.
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
-            notificationBuilder.setContentText(Long.toString(millisUntilFinished));
+            String notificationString  = getDate(millisUntilFinished, "hh:mm:ss");
+            notificationBuilder.setContentText(notificationString);
             startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
 
         }
@@ -123,6 +132,17 @@ public class TimeService extends Service {
         public void onFinish() {
 
         }
+    }
+
+    public static String getDate(long milliSeconds, String dateFormat)
+    {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
     }
 
     public void createNotification() {
