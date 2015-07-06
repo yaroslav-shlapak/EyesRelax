@@ -57,8 +57,6 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onPause() {
         super.onPause();
-        Intent intent = new Intent(this, TimeService.class);
-        this.stopService(intent);
     }
 
     public void setStartButtonFragment() {
@@ -75,17 +73,6 @@ public class MainActivity extends ActionBarActivity
         int fragmentId = R.id.buttonsFrame;
 
         replaceFragment(fragment, fragmentId);
-    }
-
-    public void setFragment(Fragment fragment, int fragmentId) {
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        //firstFragment.setArguments(getIntent().getExtras());
-
-        // Add the fragment to the 'fragment_container' FrameLayout
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(fragmentId, fragment).commit();
     }
 
     public void replaceFragment(Fragment fragment, int fragmentId) {

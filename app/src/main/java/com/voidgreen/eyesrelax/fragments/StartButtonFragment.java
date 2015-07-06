@@ -56,6 +56,7 @@ public class StartButtonFragment extends Fragment {
                 Resources resources = getResources();
                 Intent intent = new Intent(activity, TimeService.class);
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.startTask));
+                intent.addCategory(TimeService.TAG);
                 activity.startService(intent);
 
                 startButtonCallBack.onStartButtonClick();

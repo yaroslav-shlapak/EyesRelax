@@ -10,8 +10,8 @@ import android.view.View;
 public class NumberPickerWorkPreference extends NumberPickerPreference {
     public static final int MAX_VALUE = 180;
     public static final int MIN_VALUE = 10;
-    private final int step = 5;
-    public final String[] VALUES = getValues(MIN_VALUE, MAX_VALUE, step);
+    public static final int STEP = 5;
+    public final String[] VALUES = getValues(MIN_VALUE, MAX_VALUE, STEP);
 
     public NumberPickerWorkPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -29,5 +29,9 @@ public class NumberPickerWorkPreference extends NumberPickerPreference {
         picker.setMaxValue(VALUES.length - 1);
         picker.setDisplayedValues(VALUES);
         picker.setValue(getValue());
+    }
+
+    public static int getNumValue(int index) {
+        return index * STEP + MIN_VALUE;
     }
 }

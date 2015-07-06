@@ -17,6 +17,10 @@ public class NumberPickerPreference extends DialogPreference {
 
     public static final int DEFAULT_VALUE = 0;
 
+    public static final int MAX_VALUE = 300;
+    public static final int MIN_VALUE = 10;
+    public static final int STEP = 10;
+
     protected NumberPicker picker;
     private int value;
 
@@ -88,4 +92,5 @@ public class NumberPickerPreference extends DialogPreference {
         }
         return values;
     }
+
 }

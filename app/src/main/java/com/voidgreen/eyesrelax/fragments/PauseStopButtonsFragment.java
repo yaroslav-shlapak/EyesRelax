@@ -69,6 +69,7 @@ public class PauseStopButtonsFragment extends Fragment {
                 Resources resources = getResources();
                 Intent intent = new Intent(activity, TimeService.class);
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.pauseTask));
+                intent.addCategory(TimeService.TAG);
                 activity.startService(intent);
                 Log.d("PauseStop", "pauseTimer");
             }

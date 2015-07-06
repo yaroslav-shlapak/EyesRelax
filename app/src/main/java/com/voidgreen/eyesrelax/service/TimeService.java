@@ -22,6 +22,7 @@ import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
+import com.voidgreen.eyesrelax.utilities.Utility;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class TimeService extends Service {
     EyesRelaxCountDownTimer timer;
     NotificationCompat.Builder notificationBuilder;
+    final public static String TAG = "TimeService";
 
 
     @Override
@@ -56,7 +58,9 @@ public class TimeService extends Service {
                 //Utility.showToast(context, "onHandleIntent:start");
                 Log.d("onStartCommand", "start");
                 if(timer == null) {
-                    timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000  , true);
+                    Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
+                    Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
+                    timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000, true);
                     timer.create();
                 }
                 timer.resume();
@@ -116,13 +120,13 @@ public class TimeService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
-r
+
             Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
 
             localIntent.putExtra(Constants.EXTENDED_DATA_STATUS, millisUntilFinished);
             // Broadcasts the Intent to receivers in this app.
-            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
-            String notificationString  = getDate(millisUntilFinished, "hh:mm:ss");
+            //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
+            String notificationString  = Utility.combinationFormatter(millisUntilFinished);
             notificationBuilder.setContentText(notificationString);
             startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
 
@@ -154,7 +158,7 @@ r
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
-        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eye_white_open),
+        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eye_white_open_notification_large),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
                 true);
@@ -183,4 +187,5 @@ r
 
         startForeground(Constants.NOTIFICATION_ID, notification);
     }
+
 }
