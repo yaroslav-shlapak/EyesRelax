@@ -1,5 +1,6 @@
 package com.voidgreen.eyesrelax;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,12 +11,12 @@ import android.view.MenuItem;
 
 import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
 import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
+import com.voidgreen.eyesrelax.utilities.Constants;
 
 
 public class MainActivity extends ActionBarActivity
         implements StartButtonFragment.OnStartButtonClickListener,
         PauseStopButtonsFragment.OnStopButtonClickListener {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,8 @@ public class MainActivity extends ActionBarActivity
             }
 
             setStartButtonFragment();
+
+
 
         }
 

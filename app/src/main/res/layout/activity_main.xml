@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <fragment
-        android:name="com.voidgreen.eyesrelax.fragments.TempProgressFragment"
+        android:name="com.voidgreen.eyesrelax.fragments.ProgressFragment"
         android:id="@+id/progressFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

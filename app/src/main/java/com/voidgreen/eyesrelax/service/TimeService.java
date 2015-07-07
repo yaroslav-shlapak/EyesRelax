@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.voidgreen.eyesrelax.MainActivity;
@@ -33,12 +34,14 @@ public class TimeService extends Service {
     EyesRelaxCountDownTimer timer;
     NotificationCompat.Builder notificationBuilder;
     final public static String TAG = "TimeService";
+    LocalBroadcastManager broadcaster;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         createNotification();
+        broadcaster = LocalBroadcastManager.getInstance(this);
 
     }
 
@@ -125,12 +128,13 @@ public class TimeService extends Service {
 
             Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
 
-            localIntent.putExtra(Constants.BROADCAST_DATA, millisUntilFinished);
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
             String notificationString  = Utility.combinationFormatter(millisUntilFinished);
             notificationBuilder.setContentText(notificationString);
             startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
+
+            sendResult(notificationString);
 
 
 
@@ -194,8 +198,10 @@ public class TimeService extends Service {
 
     public void sendResult(String message) {
         Intent intent = new Intent(Constants.BROADCAST_NAME);
-        if(message != null)
+        if(message != null) {
             intent.putExtra(Constants.BROADCAST_DATA, message);
+        }
+        Log.d("TimeService", "sendResult");
         broadcaster.sendBroadcast(intent);
     }
 

@@ -23,20 +23,42 @@ import com.voidgreen.eyesrelax.utilities.Constants;
  */
 public class ProgressFragment extends Fragment {
     TextView textView;
+    BroadcastReceiver receiver;
+    Activity activity;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity = getActivity();
+
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String s = intent.getStringExtra(Constants.BROADCAST_DATA);
+                textView.setText(s);
+                Log.d("ProgressFragment", "receiver.onReceive");
+            }
+        };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.progress_layout, container, false);
+        View view = inflater.inflate(R.layout.progress_layout, container, false);
+        textView = (TextView) view.findViewById(R.id.textView);
+        return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Activity activity = getActivity();
+
 
         ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressBar);
-        textView = (TextView) activity.findViewById(R.id.textView);
+        Log.d("TimeService", "sendResult");
+
+
         //AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
 
     }
@@ -46,13 +68,18 @@ public class ProgressFragment extends Fragment {
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "custom-event-name".
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                mMessageReceiver, new IntentFilter(Constants.BROADCAST_NAME));
+/*        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
+                mMessageReceiver, new IntentFilter(Constants.BROADCAST_NAME));*/
+        LocalBroadcastManager.getInstance(activity).registerReceiver((receiver),
+                new IntentFilter(Constants.BROADCAST_NAME)
+        );
         super.onResume();
     }
 
     @Override
     public void onPause() {
+
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver);
         super.onPause();
     }
 
