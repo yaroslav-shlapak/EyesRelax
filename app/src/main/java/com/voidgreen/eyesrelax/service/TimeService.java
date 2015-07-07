@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.voidgreen.eyesrelax.MainActivity;
@@ -26,7 +25,6 @@ import com.voidgreen.eyesrelax.utilities.Utility;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Void on 29-Jun-15.
@@ -73,6 +71,10 @@ public class TimeService extends Service {
                     Log.d("onStartCommand", "pause");
                     timer.pause();
                 }
+                break;
+
+            case "resume":
+                timer.resume();
                 break;
 
             case "stop":

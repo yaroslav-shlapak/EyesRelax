@@ -14,5 +14,6 @@
     <string name="startTask">start</string>
     <string name="pauseTask">pause</string>
     <string name="stopTask">stop</string>
+    <string name="resumeTask">resume</string>
 
 </resources>

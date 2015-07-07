@@ -48,30 +48,48 @@ public class PauseStopButtonsFragment extends Fragment {
 
         final Activity activity = getActivity();
         Button stopButton = (Button) getActivity().findViewById(R.id.stopButton);
-        Button pauseButton = (Button) getActivity().findViewById(R.id.pauseButton);
+        final Button pauseButton = (Button) getActivity().findViewById(R.id.pauseButton);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //AnimationProgressBarUtility.stop();
+                Resources resources = getResources();
                 Intent intent = new Intent(activity, TimeService.class);
-
-
+                intent.putExtra(resources.getString(R.string.serviceTask),
+                        resources.getString(R.string.pauseTask));
+                intent.addCategory(TimeService.TAG);
                 activity.stopService(intent);
                 Log.d("PauseStop", "stopService");
 
                 stopButtonCallBack.onStopButtonClick();
             }
         });
+
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //AnimationProgressBarUtility.pause();
+                String pauseBattonText = pauseButton.getText().toString();
                 Resources resources = getResources();
                 Intent intent = new Intent(activity, TimeService.class);
-                intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.pauseTask));
                 intent.addCategory(TimeService.TAG);
-                activity.startService(intent);
-                Log.d("PauseStop", "pauseTimer");
+
+                switch(pauseBattonText) {
+                    case "Pause":
+
+                        intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.pauseTask));
+                        activity.startService(intent);
+                        pauseButton.setText("Resume");
+                        break;
+                    case "Resume":
+
+                        intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.resumeTask));
+                        activity.startService(intent);
+                        pauseButton.setText("Pause");
+                        break;
+                }
+
+
             }
         });
     }
