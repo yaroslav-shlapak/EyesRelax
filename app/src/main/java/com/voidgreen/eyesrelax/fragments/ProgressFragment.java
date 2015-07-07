@@ -47,7 +47,7 @@ public class ProgressFragment extends Fragment {
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "custom-event-name".
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                mMessageReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
+                mMessageReceiver, new IntentFilter(Constants.BROADCAST_NAME));
         super.onResume();
     }
 
@@ -62,7 +62,7 @@ public class ProgressFragment extends Fragment {
             // TODO Auto-generated method stub
             // Get extra data included in the Intent
             Log.d("BroadcastReceiver", "onReceive");
-            long message = intent.getLongExtra(Constants.EXTENDED_DATA_STATUS, -1);
+            long message = intent.getLongExtra(Constants.BROADCAST_DATA, -1);
 
             textView.setText(Long.toString(message));
         }

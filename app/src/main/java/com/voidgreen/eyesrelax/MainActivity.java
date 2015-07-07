@@ -1,23 +1,15 @@
 package com.voidgreen.eyesrelax;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
 import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
-import com.voidgreen.eyesrelax.service.TimeService;
-import com.voidgreen.eyesrelax.utilities.Constants;
 
 
 public class MainActivity extends ActionBarActivity
@@ -46,9 +38,9 @@ public class MainActivity extends ActionBarActivity
 
         }
 
-/*        // The filter's action is BROADCAST_ACTION
+/*        // The filter's action is
         IntentFilter mStatusIntentFilter = new IntentFilter(
-                Constants.BROADCAST_ACTION);
+                Constants.BROADCAST_NAME);
 
         // Adds a data filter for the HTTP scheme
         mStatusIntentFilter.addDataScheme("http");*/

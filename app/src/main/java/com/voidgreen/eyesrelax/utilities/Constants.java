@@ -6,12 +6,12 @@ package com.voidgreen.eyesrelax.utilities;
 public final class Constants {
 
     // Defines a custom Intent action
-    public static final String BROADCAST_ACTION =
-            "com.voidgreen.eyesrelax.BROADCAST";
+    public static final String BROADCAST_NAME =
+            "com.voidgreen.eyesrelax.NAME";
 
     // Defines the key for the status "extra" in an Intent
-    public static final String EXTENDED_DATA_STATUS =
-            "com.voidgreen.eyesrelax.STATUS";
+    public static final String BROADCAST_DATA =
+            "com.voidgreen.eyesrelax.DATA";
 
     public static final int NOTIFICATION_ID = 101;
 

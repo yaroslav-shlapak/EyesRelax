@@ -10,11 +10,11 @@ import android.content.Intent;
 public class TimerAlarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-/*        Intent localIntent = new Intent(Constants.BROADCAST_ACTION);
+/*        Intent localIntent = new Intent(Constants.BROADCAST_NAME);
         Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
         this.
 
-        localIntent.putExtra(Constants.EXTENDED_DATA_STATUS, );
+        localIntent.putExtra(Constants.BROADCAST_DATA, );
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);*/
     }

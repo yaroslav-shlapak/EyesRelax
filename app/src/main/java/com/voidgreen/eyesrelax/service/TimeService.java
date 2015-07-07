@@ -115,7 +115,7 @@ public class TimeService extends Service {
 
         public EyesRelaxCountDownTimer(long millisOnTimer, long countDownInterval, boolean runAtStart) {
             super(millisOnTimer, countDownInterval, runAtStart);
-            this.localIntent = new Intent(Constants.BROADCAST_ACTION);
+            this.localIntent = new Intent(Constants.BROADCAST_NAME);
         }
 
 
@@ -125,12 +125,14 @@ public class TimeService extends Service {
 
             Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
 
-            localIntent.putExtra(Constants.EXTENDED_DATA_STATUS, millisUntilFinished);
+            localIntent.putExtra(Constants.BROADCAST_DATA, millisUntilFinished);
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
             String notificationString  = Utility.combinationFormatter(millisUntilFinished);
             notificationBuilder.setContentText(notificationString);
             startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
+
+
 
         }
 
@@ -188,6 +190,13 @@ public class TimeService extends Service {
         mNotificationManager.notify(Constants.NOTIFICATION_ID, notification);
 
         startForeground(Constants.NOTIFICATION_ID, notification);
+    }
+
+    public void sendResult(String message) {
+        Intent intent = new Intent(Constants.BROADCAST_NAME);
+        if(message != null)
+            intent.putExtra(Constants.BROADCAST_DATA, message);
+        broadcaster.sendBroadcast(intent);
     }
 
 }
