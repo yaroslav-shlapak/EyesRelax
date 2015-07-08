@@ -36,7 +36,7 @@ public class ProgressFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 String s = intent.getStringExtra(Constants.BROADCAST_TIME_STRING_DATA);
                 textView.setText(s);
-                Log.d("ProgressFragment", "receiver.onReceive");
+                //Log.d("ProgressFragment", "receiver.onReceive");
             }
         };
     }

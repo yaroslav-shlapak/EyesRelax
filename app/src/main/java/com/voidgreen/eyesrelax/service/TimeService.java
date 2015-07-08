@@ -73,7 +73,7 @@ public class TimeService extends Service {
         if (intent !=null && intent.getExtras()!=null) {
             task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
-        Log.d("onStartCommand", "onHandleIntent");
+
         switch (task) {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
@@ -117,7 +117,7 @@ public class TimeService extends Service {
                 //Utility.showToast(context, "onHandleIntent:default");
                 Log.d("onStartCommand", "default");
                 break;
-        }
+    }
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -149,7 +149,7 @@ public class TimeService extends Service {
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
 
-            Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
+            //Log.d("onHandleIntent", "onTick: " + millisUntilFinished);
 
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);

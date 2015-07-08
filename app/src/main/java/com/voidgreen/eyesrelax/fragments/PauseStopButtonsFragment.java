@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.service.TimeService;
 
@@ -47,7 +48,7 @@ public class PauseStopButtonsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        final Activity activity = getActivity();
+        final MainActivity activity = (MainActivity) getActivity();
         Button stopButton = (Button) getActivity().findViewById(R.id.stopButton);
         pauseButton = (Button) getActivity().findViewById(R.id.pauseButton);
         stopButton.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +61,7 @@ public class PauseStopButtonsFragment extends Fragment {
                         resources.getString(R.string.pauseTask));
                 intent.addCategory(TimeService.TAG);
                 activity.stopService(intent);
+                activity.unbindTimeService();
                 Log.d("PauseStop", "stopService");
 
                 stopButtonCallBack.onStopButtonClick();

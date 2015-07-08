@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -30,49 +31,10 @@ public class MainActivity extends ActionBarActivity
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.buttonsFrame) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-            Intent intent = new Intent(this, TimeService.class);
-            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-            if (mBound) {
-                // Call a method from the LocalService.
-                // However, if this call were something that might hang, then this request should
-                // occur in a separate thread to avoid slowing down the activity performance.
-                String state = mService.getState();
-                switch (state) {
-                    case "start":
-                        setStartButtonFragment();
-                        break;
-
-                    case "pause":
-                        setPauseStopButtonFragment();
-                        PauseStopButtonsFragment fragment_obj = (PauseStopButtonsFragment)getSupportFragmentManager().
-                                findFragmentById(R.id.pauseButton);
-
-                        break;
-
-                    case "resume":
-                        setPauseStopButtonFragment();
-                        break;
-
-                    case "stop":
-                        setPauseStopButtonFragment();
-                        break;
-
-                    default:
-
-                        break;
-                }
-            }
-
-
-        }
+        Intent intent = new Intent(this, TimeService.class);
+        intent.addCategory(TimeService.TAG);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        setActivityUI();
 
     }
 
@@ -80,6 +42,10 @@ public class MainActivity extends ActionBarActivity
     protected void onStop() {
         super.onStop();
         // Unbind from the service
+        unbindTimeService();
+
+    }
+    public void unbindTimeService() {
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
@@ -92,11 +58,71 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void setActivityUI() {
+        if (mBound) {
+            // Call a method from the LocalService.
+            // However, if this call were something that might hang, then this request should
+            // occur in a separate thread to avoid slowing down the activity performance.
+            String state = mService.getState();
+            PauseStopButtonsFragment fragment_obj = (PauseStopButtonsFragment)getSupportFragmentManager().
+                    findFragmentById(R.id.pauseButton);
+            switch (state) {
+                case "start":
+                    setStartButtonFragment();
+                    Log.d("ActivityOnCreate", "start");
+                    break;
+
+                case "pause":
+                    setPauseStopButtonFragment();
+                    fragment_obj.updatePauseResumeButton("pause");
+                    Log.d("ActivityOnCreate", "pause");
+
+                    break;
+
+                case "resume":
+                    setPauseStopButtonFragment();
+                    fragment_obj.updatePauseResumeButton("resume");
+                    Log.d("ActivityOnCreate", "resume");
+                    break;
+
+                case "stop":
+                    setPauseStopButtonFragment();
+                    unbindTimeService();
+                    Log.d("ActivityOnCreate", "stop");
+                    break;
+
+                default:
+                    setStartButtonFragment();
+                    Log.d("ActivityOnCreate", "default");
+                    break;
+            }
+        } else {
+            Log.d("ActivityOnCreate", "else");
+            setStartButtonFragment();
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         // Bind to LocalService
-        Intent intent = new Intent(this, TimeService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+/*        if (findViewById(R.id.buttonsFrame) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+
+        }*/
+
 
     }
 
@@ -164,10 +190,12 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
+            Log.d("mConnection", "onServiceConnected");
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
             mService = binder.getService();
             mBound = true;
+            setActivityUI();
         }
 
         @Override
