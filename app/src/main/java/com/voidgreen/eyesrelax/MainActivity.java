@@ -1,9 +1,11 @@
 package com.voidgreen.eyesrelax;
 
-import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -11,12 +13,14 @@ import android.view.MenuItem;
 
 import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
 import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
-import com.voidgreen.eyesrelax.utilities.Constants;
+import com.voidgreen.eyesrelax.service.TimeService;
 
 
 public class MainActivity extends ActionBarActivity
         implements StartButtonFragment.OnStartButtonClickListener,
         PauseStopButtonsFragment.OnStopButtonClickListener {
+    TimeService mService;
+    boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,24 +38,66 @@ public class MainActivity extends ActionBarActivity
             if (savedInstanceState != null) {
                 return;
             }
+            Intent intent = new Intent(this, TimeService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            if (mBound) {
+                // Call a method from the LocalService.
+                // However, if this call were something that might hang, then this request should
+                // occur in a separate thread to avoid slowing down the activity performance.
+                String state = mService.getState();
+                switch (state) {
+                    case "start":
+                        setStartButtonFragment();
+                        break;
 
-            setStartButtonFragment();
+                    case "pause":
+                        setPauseStopButtonFragment();
+                        PauseStopButtonsFragment fragment_obj = (PauseStopButtonsFragment)getSupportFragmentManager().
+                                findFragmentById(R.id.pauseButton);
 
+                        break;
+
+                    case "resume":
+                        setPauseStopButtonFragment();
+                        break;
+
+                    case "stop":
+                        setPauseStopButtonFragment();
+                        break;
+
+                    default:
+
+                        break;
+                }
+            }
 
 
         }
 
-/*        // The filter's action is
-        IntentFilter mStatusIntentFilter = new IntentFilter(
-                Constants.BROADCAST_NAME);
+    }
 
-        // Adds a data filter for the HTTP scheme
-        mStatusIntentFilter.addDataScheme("http");*/
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to LocalService
+        Intent intent = new Intent(this, TimeService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     public void setStartButtonFragment() {
@@ -111,6 +157,24 @@ public class MainActivity extends ActionBarActivity
     public void onStopButtonClick() {
         setStartButtonFragment();
     }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
 
 }

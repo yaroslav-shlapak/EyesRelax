@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.voidgreen.eyesrelax.R;
@@ -35,7 +34,7 @@ public class ProgressFragment extends Fragment {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String s = intent.getStringExtra(Constants.BROADCAST_DATA);
+                String s = intent.getStringExtra(Constants.BROADCAST_TIME_STRING_DATA);
                 textView.setText(s);
                 Log.d("ProgressFragment", "receiver.onReceive");
             }
@@ -55,10 +54,6 @@ public class ProgressFragment extends Fragment {
         super.onStart();
 
 
-        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressBar);
-        Log.d("TimeService", "sendResult");
-
-
         //AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
 
     }
@@ -68,10 +63,8 @@ public class ProgressFragment extends Fragment {
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "custom-event-name".
-/*        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                mMessageReceiver, new IntentFilter(Constants.BROADCAST_NAME));*/
         LocalBroadcastManager.getInstance(activity).registerReceiver((receiver),
-                new IntentFilter(Constants.BROADCAST_NAME)
+                new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME)
         );
         super.onResume();
     }
@@ -83,15 +76,4 @@ public class ProgressFragment extends Fragment {
         super.onPause();
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
-            // Get extra data included in the Intent
-            Log.d("BroadcastReceiver", "onReceive");
-            long message = intent.getLongExtra(Constants.BROADCAST_DATA, -1);
-
-            textView.setText(Long.toString(message));
-        }
-    };
 }

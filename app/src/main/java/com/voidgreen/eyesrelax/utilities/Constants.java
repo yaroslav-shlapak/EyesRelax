@@ -5,13 +5,17 @@ package com.voidgreen.eyesrelax.utilities;
  */
 public final class Constants {
 
-    // Defines a custom Intent action
-    public static final String BROADCAST_NAME =
-            "com.voidgreen.eyesrelax.NAME";
+    public static final String BROADCAST_TIME_STRING_NAME =
+            "com.voidgreen.eyesrelax.TIME_STRING_NAME";
 
-    // Defines the key for the status "extra" in an Intent
-    public static final String BROADCAST_DATA =
-            "com.voidgreen.eyesrelax.DATA";
+    public static final String BROADCAST_TIME_STRING_DATA =
+            "com.voidgreen.eyesrelax.TIME_STRING_DATA";
+
+    public static final String BROADCAST_STATE_NAME =
+            "com.voidgreen.eyesrelax.STATE_NAME";
+
+    public static final String BROADCAST_STATE_DATA =
+            "com.voidgreen.eyesrelax.STATE_DATA";
 
     public static final int NOTIFICATION_ID = 101;
 

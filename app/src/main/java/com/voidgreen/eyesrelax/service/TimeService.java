@@ -10,8 +10,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -35,7 +35,27 @@ public class TimeService extends Service {
     NotificationCompat.Builder notificationBuilder;
     final public static String TAG = "TimeService";
     LocalBroadcastManager broadcaster;
+    private final IBinder mBinder = new TimeBinder();
+    String state = "start";
 
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class TimeBinder extends Binder {
+        public TimeService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return TimeService.this;
+        }
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     @Override
     public void onCreate() {
@@ -65,6 +85,7 @@ public class TimeService extends Service {
                     timer.create();
                 }
                 timer.resume();
+                setState("start");
 
                 break;
 
@@ -74,10 +95,14 @@ public class TimeService extends Service {
                     Log.d("onStartCommand", "pause");
                     timer.pause();
                 }
+                setState("pause");
                 break;
 
             case "resume":
-                timer.resume();
+                if(timer != null) {
+                    timer.resume();
+                }
+                setState("resume");
                 break;
 
             case "stop":
@@ -85,6 +110,7 @@ public class TimeService extends Service {
                     timer.cancel();
                     Log.d("onStartCommand", "cancel");
                 }
+                setState("stop");
                 break;
 
             default:
@@ -106,19 +132,16 @@ public class TimeService extends Service {
         }
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
 
     private class EyesRelaxCountDownTimer extends CountDownTimerWithPause {
-        Intent localIntent;
 
         public EyesRelaxCountDownTimer(long millisOnTimer, long countDownInterval, boolean runAtStart) {
             super(millisOnTimer, countDownInterval, runAtStart);
-            this.localIntent = new Intent(Constants.BROADCAST_NAME);
         }
 
 
@@ -134,7 +157,7 @@ public class TimeService extends Service {
             notificationBuilder.setContentText(notificationString);
             startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
 
-            sendResult(notificationString);
+            sendTimeString(notificationString);
 
 
 
@@ -196,12 +219,19 @@ public class TimeService extends Service {
         startForeground(Constants.NOTIFICATION_ID, notification);
     }
 
-    public void sendResult(String message) {
-        Intent intent = new Intent(Constants.BROADCAST_NAME);
+    public void sendTimeString(String message) {
+        Intent intent = new Intent(Constants.BROADCAST_TIME_STRING_NAME);
         if(message != null) {
-            intent.putExtra(Constants.BROADCAST_DATA, message);
+            intent.putExtra(Constants.BROADCAST_TIME_STRING_DATA, message);
         }
-        Log.d("TimeService", "sendResult");
+        broadcaster.sendBroadcast(intent);
+    }
+
+    public void sendState(String message) {
+        Intent intent = new Intent(Constants.BROADCAST_STATE_NAME);
+        if(message != null) {
+            intent.putExtra(Constants.BROADCAST_STATE_DATA, message);
+        }
         broadcaster.sendBroadcast(intent);
     }
 
