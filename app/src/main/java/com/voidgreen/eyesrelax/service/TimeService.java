@@ -24,9 +24,6 @@ import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
 import com.voidgreen.eyesrelax.utilities.Utility;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 /**
  * Created by Void on 29-Jun-15.
  */
@@ -130,6 +127,7 @@ public class TimeService extends Service {
             Log.d("onDestroy", "cancelTimer");
             timer.cancel();
         }
+        finishAll();
     }
 
     @Override
@@ -165,27 +163,24 @@ public class TimeService extends Service {
 
         @Override
         public void onFinish() {
-
+            finishAll();
         }
     }
 
-    public static String getDate(long milliSeconds, String dateFormat)
-    {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
+    private void finishAll() {
+        sendTimeString(Constants.ZERO_PROGRESS);
+        notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
+        startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
+        notificationBuilder.setOngoing(false);
     }
+
 
     public void createNotification() {
         notificationBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.eye_white_open)
                         .setContentTitle("Time to relax")
-                        .setContentText("00:00:00");
+                        .setContentText(Constants.ZERO_PROGRESS);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 

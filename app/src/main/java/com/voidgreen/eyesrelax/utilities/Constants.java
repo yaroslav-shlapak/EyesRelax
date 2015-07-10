@@ -19,4 +19,11 @@ public final class Constants {
 
     public static final int NOTIFICATION_ID = 101;
 
+    public static final String ZERO_PROGRESS = "00:00:00";
+
+    public static final String PROGRESS_KEY =
+            "com.voidgreen.eyesrelax.PROGRESS_KEY";
+
+
+
 }
