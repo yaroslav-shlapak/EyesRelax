@@ -15,5 +15,7 @@
     <string name="pauseTask">pause</string>
     <string name="stopTask">stop</string>
     <string name="resumeTask">resume</string>
+    <string name="timeString">timeSting</string>
+    <string name="eyesRelaxSharedPref">eyesRelaxSharedPref</string>
 
 </resources>

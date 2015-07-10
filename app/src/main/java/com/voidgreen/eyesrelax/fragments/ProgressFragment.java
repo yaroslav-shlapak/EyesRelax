@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
+import com.voidgreen.eyesrelax.utilities.Utility;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -30,13 +30,8 @@ public class ProgressFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        if(savedInstanceState != null) {
-            String s = savedInstanceState.getString(Constants.PROGRESS_KEY);
-            if(s != null) {
-                progress = s;
-            }
+        updateProgressFromBundle(savedInstanceState);
 
-        }
 
 
         receiver = new BroadcastReceiver() {
@@ -73,7 +68,20 @@ public class ProgressFragment extends Fragment {
                 new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME));
         updateProgressTextView(activity.getIntent());
 
+
         super.onResume();
+    }
+
+    private void updateProgressFromBundle(Bundle bundle) {
+        if(bundle != null) {
+            String s = bundle.getString(Constants.PROGRESS_KEY);
+            if(s != null) {
+                progress = s;
+            }
+
+        } else {
+            progress = Utility.getSavedTimeString(activity.getApplicationContext());
+        }
     }
 
     @Override
@@ -85,10 +93,7 @@ public class ProgressFragment extends Fragment {
     private void updateProgressTextView(Intent intent) {
         String s = intent.getStringExtra(Constants.BROADCAST_TIME_STRING_DATA);
         if(s != null) {
-            Log.d("ProgressFragment", "updateProgressTextView : if");
             progress = s;
-        } else {
-            Log.d("ProgressFragment", "updateProgressTextView : after if");
         }
         textView.setText(progress);
     }
@@ -96,7 +101,16 @@ public class ProgressFragment extends Fragment {
     public void onPause() {
 
         LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver);
+        Utility.saveTimeString(activity.getApplicationContext(), progress);
+
+        putStringToBundle();
         super.onPause();
+    }
+
+    private void putStringToBundle() {
+        Intent mIntent = new Intent(activity, ProgressFragment.class);
+        Bundle extras = mIntent.getExtras();
+        updateProgressFromBundle(extras);
     }
 
 

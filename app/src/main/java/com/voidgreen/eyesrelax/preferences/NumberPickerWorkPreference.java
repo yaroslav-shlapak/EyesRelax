@@ -8,9 +8,9 @@ import android.view.View;
  * Created by y.shlapak on Jun 25, 2015.
  */
 public class NumberPickerWorkPreference extends NumberPickerPreference {
-    public static final int MAX_VALUE = 180;
-    public static final int MIN_VALUE = 10;
-    public static final int STEP = 5;
+    public static final int MAX_VALUE = 20;
+    public static final int MIN_VALUE = 1;
+    public static final int STEP = 1;
     public final String[] VALUES = getValues(MIN_VALUE, MAX_VALUE, STEP);
 
     public NumberPickerWorkPreference(Context context, AttributeSet attrs) {

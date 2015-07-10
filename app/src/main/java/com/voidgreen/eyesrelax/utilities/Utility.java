@@ -1,7 +1,10 @@
 package com.voidgreen.eyesrelax.utilities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.Toast;
+
+import com.voidgreen.eyesrelax.R;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,5 +33,20 @@ public class Utility {
         b.append(seconds == 0 ? "00" : seconds < 10 ? String.valueOf("0" + seconds) :
                 String.valueOf(seconds));
         return b.toString();
+    }
+
+    public static String getSavedTimeString(Context context) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        return batteryInfoSharedPref.getString
+                (context.getString(R.string.timeString), Constants.ZERO_PROGRESS);
+    }
+
+    public static void saveTimeString(Context context, String value) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = batteryInfoSharedPref.edit();
+        editor.putString(context.getString(R.string.timeString), value);
+        editor.apply();
     }
 }

@@ -57,7 +57,6 @@ public class TimeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotification();
         broadcaster = LocalBroadcastManager.getInstance(this);
 
     }
@@ -78,6 +77,7 @@ public class TimeService extends Service {
                 if(timer == null) {
                     Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
+                    createNotification();
                     timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000, true);
                     timer.create();
                 }
@@ -164,16 +164,23 @@ public class TimeService extends Service {
         @Override
         public void onFinish() {
             finishAll();
+            stopSelf();
         }
     }
 
     private void finishAll() {
         sendTimeString(Constants.ZERO_PROGRESS);
-        notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
-        startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
-        notificationBuilder.setOngoing(false);
+        Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
+        if (notificationBuilder != null) {
+            notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
+            notificationBuilder.setOngoing(false);
+            startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(Constants.NOTIFICATION_ID);
+        }
+        setState("start");
     }
-
 
     public void createNotification() {
         notificationBuilder =
