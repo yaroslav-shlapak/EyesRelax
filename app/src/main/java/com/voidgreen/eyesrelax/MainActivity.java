@@ -29,8 +29,6 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         Intent intent = new Intent(this, TimeService.class);
@@ -62,7 +60,6 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     private void setActivityUI() {
@@ -108,20 +105,6 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onStart() {
         super.onStart();
-        // Bind to LocalService
-/*        if (findViewById(R.id.buttonsFrame) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-
-
-        }*/
-
-
     }
 
     public void setStartButtonFragment() {
@@ -148,7 +131,6 @@ public class MainActivity extends ActionBarActivity
                 .replace(fragmentId, fragment).commit();
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -170,9 +152,6 @@ public class MainActivity extends ActionBarActivity
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-
 
     @Override
     public void onStartButtonClick() {
@@ -203,6 +182,4 @@ public class MainActivity extends ActionBarActivity
             mBound = false;
         }
     };
-
-
 }

@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
 import com.voidgreen.eyesrelax.R;
-import com.voidgreen.eyesrelax.preferences.NumberPickerPreference;
 import com.voidgreen.eyesrelax.preferences.NumberPickerRelaxPreference;
 import com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference;
 
@@ -14,7 +13,7 @@ import com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference;
  * Created by Void on 28-Jun-15.
  */
 public class SettingsDataUtility {
-    private final static int DEFAULT = 30;
+    private final static int DEFAULT = 0;
 
     public static int getRelaxTime(Context context) {
         Resources resources = context.getResources();
