@@ -35,6 +35,12 @@ public class TimeService extends Service {
     private final IBinder mBinder = new TimeBinder();
     String state = "start";
 
+    public void setStage(String stage) {
+        this.stage = stage;
+    }
+
+    String stage = "work";
+
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -64,12 +70,17 @@ public class TimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Resources resources = getResources();
-        Context context = getApplicationContext();
+
         String task = "";
         if (intent !=null && intent.getExtras()!=null) {
             task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
+        timeSequence(task, stage);
+        return super.onStartCommand(intent, flags, startId);
+    }
 
+    private void timeSequence(String task, String stage) {
+        Context context = getApplicationContext();
         switch (task) {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
@@ -77,8 +88,20 @@ public class TimeService extends Service {
                 if(timer == null) {
                     Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
-                    createNotification();
-                    timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000, true);
+
+                    switch (stage) {
+                        case "work":
+                            createNotification("Time to relax");
+                            timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000, true);
+                            break;
+                        case "relax":
+                            createNotification("Time to work");
+                            timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getRelaxTime(context) * 1000, 1000, true);
+                            break;
+                        default:
+                            break;
+                    }
+
                     timer.create();
                 }
                 timer.resume();
@@ -93,6 +116,7 @@ public class TimeService extends Service {
                     timer.pause();
                 }
                 setState("resume");
+
                 break;
 
             case "resume":
@@ -108,16 +132,15 @@ public class TimeService extends Service {
                     Log.d("onStartCommand", "cancel");
                 }
                 setState("start");
+                setStage("work");
+
                 break;
 
             default:
                 //Utility.showToast(context, "onHandleIntent:default");
                 Log.d("onStartCommand", "default");
                 break;
-    }
-
-
-        return super.onStartCommand(intent, flags, startId);
+        }
     }
 
     @Override
@@ -164,7 +187,18 @@ public class TimeService extends Service {
         @Override
         public void onFinish() {
             finishAll();
-            stopSelf();
+            //stopForeground(true);
+            switch (stage) {
+                case "work":
+                    setStage("relax");
+                    break;
+                case "relax":
+                    setStage("work");
+                    break;
+                default:
+                    break;
+            }
+            timeSequence("start", stage);
         }
     }
 
@@ -182,11 +216,11 @@ public class TimeService extends Service {
         setState("start");
     }
 
-    public void createNotification() {
+    public void createNotification(String title) {
         notificationBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.eye_white_open)
-                        .setContentTitle("Time to relax")
+                        .setContentTitle(title)
                         .setContentText(Constants.ZERO_PROGRESS);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
