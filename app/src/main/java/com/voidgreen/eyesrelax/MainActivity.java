@@ -22,6 +22,8 @@ public class MainActivity extends ActionBarActivity
         PauseStopButtonsFragment.OnStopButtonClickListener {
     TimeService mService;
     boolean mBound = false;
+    PauseStopButtonsFragment pauseStopButtonsFragment;
+    StartButtonFragment startButtonFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +71,6 @@ public class MainActivity extends ActionBarActivity
             // However, if this call were something that might hang, then this request should
             // occur in a separate thread to avoid slowing down the activity performance.
             String state = mService.getState();
-            PauseStopButtonsFragment fragment_obj = (PauseStopButtonsFragment)getSupportFragmentManager().
-                    findFragmentById(R.id.pauseButton);
             switch (state) {
                 case "start":
                     setStartButtonFragment();
@@ -78,20 +78,18 @@ public class MainActivity extends ActionBarActivity
                     break;
 
                 case "pause":
-                    setPauseStopButtonFragment();
-                    fragment_obj.updatePauseResumeButton("pause");
+                    setPauseStopButtonFragment("Pause");
                     Log.d("ActivityOnCreate", "pause");
 
                     break;
 
                 case "resume":
-                    setPauseStopButtonFragment();
-                    fragment_obj.updatePauseResumeButton("resume");
+                    setPauseStopButtonFragment("Resume");
                     Log.d("ActivityOnCreate", "resume");
                     break;
 
                 case "stop":
-                    setPauseStopButtonFragment();
+                    setPauseStopButtonFragment("Pause");
                     unbindTimeService();
                     Log.d("ActivityOnCreate", "stop");
                     break;
@@ -128,18 +126,20 @@ public class MainActivity extends ActionBarActivity
 
     public void setStartButtonFragment() {
         // Create a new Fragment to be placed in the activity layout
-        Fragment fragment = new StartButtonFragment();
+        startButtonFragment = new StartButtonFragment();
         int fragmentId = R.id.buttonsFrame;
 
-        replaceFragment(fragment, fragmentId);
+        replaceFragment(startButtonFragment, fragmentId);
     }
 
-    public void setPauseStopButtonFragment() {
+    public void setPauseStopButtonFragment(String state) {
         // Create a new Fragment to be placed in the activity layout
-        Fragment fragment = new PauseStopButtonsFragment();
+        pauseStopButtonsFragment = new PauseStopButtonsFragment();
+
         int fragmentId = R.id.buttonsFrame;
 
-        replaceFragment(fragment, fragmentId);
+        replaceFragment(pauseStopButtonsFragment, fragmentId);
+        pauseStopButtonsFragment.setState(state);
     }
 
     public void replaceFragment(Fragment fragment, int fragmentId) {
@@ -176,7 +176,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onStartButtonClick() {
-        setPauseStopButtonFragment();
+        setPauseStopButtonFragment("Pause");
     }
 
     @Override

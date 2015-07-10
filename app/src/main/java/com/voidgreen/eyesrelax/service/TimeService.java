@@ -85,7 +85,7 @@ public class TimeService extends Service {
                     timer.create();
                 }
                 timer.resume();
-                setState("start");
+                setState("stop");
 
                 break;
 
@@ -95,14 +95,14 @@ public class TimeService extends Service {
                     Log.d("onStartCommand", "pause");
                     timer.pause();
                 }
-                setState("pause");
+                setState("resume");
                 break;
 
             case "resume":
                 if(timer != null) {
                     timer.resume();
                 }
-                setState("resume");
+                setState("pause");
                 break;
 
             case "stop":
@@ -110,7 +110,7 @@ public class TimeService extends Service {
                     timer.cancel();
                     Log.d("onStartCommand", "cancel");
                 }
-                setState("stop");
+                setState("start");
                 break;
 
             default:

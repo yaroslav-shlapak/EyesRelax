@@ -22,6 +22,7 @@ import com.voidgreen.eyesrelax.service.TimeService;
 public class PauseStopButtonsFragment extends Fragment {
     OnStopButtonClickListener stopButtonCallBack;
     Button pauseButton;
+    String state = "Pause";
 
     public interface OnStopButtonClickListener {
         public void onStopButtonClick();
@@ -51,6 +52,7 @@ public class PauseStopButtonsFragment extends Fragment {
         final MainActivity activity = (MainActivity) getActivity();
         Button stopButton = (Button) getActivity().findViewById(R.id.stopButton);
         pauseButton = (Button) getActivity().findViewById(R.id.pauseButton);
+        pauseButton.setText(state);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +82,11 @@ public class PauseStopButtonsFragment extends Fragment {
         });
     }
 
-    public void updatePauseResumeButton(String pauseBattonText) {
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    private void updatePauseResumeButton(String pauseBattonText) {
         Resources resources = getResources();
         Activity activity = getActivity();
         Intent intent = new Intent(activity, TimeService.class);
