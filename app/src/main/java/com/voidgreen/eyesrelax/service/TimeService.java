@@ -1,11 +1,13 @@
 package com.voidgreen.eyesrelax.service;
 
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ import android.util.Log;
 
 import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
+import com.voidgreen.eyesrelax.ServiceDialogBuilder;
 import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
@@ -37,6 +40,7 @@ public class TimeService extends Service {
 
     public void setStage(String stage) {
         this.stage = stage;
+        Log.d("TimeService", "setStage : " + stage );
     }
 
     String stage = "work";
@@ -58,6 +62,7 @@ public class TimeService extends Service {
 
     public void setState(String state) {
         this.state = state;
+        Log.d("TimeService", "setState : " + state );
     }
 
     @Override
@@ -91,11 +96,11 @@ public class TimeService extends Service {
 
                     switch (stage) {
                         case "work":
-                            createNotification("Time to relax");
-                            timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 60 * 1000, 1000, true);
+                            createNotification("Time to relax", R.drawable.eye_white_open, R.drawable.eye_white_open_notification_large);
+                            timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 1000, 1000, true);
                             break;
                         case "relax":
-                            createNotification("Time to work");
+                            createNotification("Time to work", R.drawable.eye_white_closed, R.drawable.eye_white_closed_notification_large);
                             timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getRelaxTime(context) * 1000, 1000, true);
                             break;
                         default:
@@ -174,14 +179,9 @@ public class TimeService extends Service {
 
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
-            String notificationString  = Utility.combinationFormatter(millisUntilFinished);
-            notificationBuilder.setContentText(notificationString);
-            startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
-
+            String notificationString = Utility.combinationFormatter(millisUntilFinished);
+            updateNotification(notificationString);
             sendTimeString(notificationString);
-
-
-
         }
 
         @Override
@@ -191,15 +191,23 @@ public class TimeService extends Service {
             switch (stage) {
                 case "work":
                     setStage("relax");
+                    setPopUpMessage();
                     break;
                 case "relax":
                     setStage("work");
+                    timeSequence("start", stage);
                     break;
                 default:
                     break;
             }
-            timeSequence("start", stage);
+
+
         }
+    }
+
+    private void updateNotification(String notificationString) {
+        notificationBuilder.setContentText(notificationString);
+        startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
     }
 
     private void finishAll() {
@@ -208,24 +216,26 @@ public class TimeService extends Service {
         if (notificationBuilder != null) {
             notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
             notificationBuilder.setOngoing(false);
+            updateNotification(Constants.ZERO_PROGRESS);
             startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.cancel(Constants.NOTIFICATION_ID);
         }
         setState("start");
+        timer = null;
     }
 
-    public void createNotification(String title) {
+    public void createNotification(String title, int smallIcon, int largeIcon) {
         notificationBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.eye_white_open)
+                        .setSmallIcon(smallIcon)
                         .setContentTitle(title)
                         .setContentText(Constants.ZERO_PROGRESS);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
-        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eye_white_open_notification_large),
+        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), largeIcon),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
                 true);
@@ -269,6 +279,25 @@ public class TimeService extends Service {
             intent.putExtra(Constants.BROADCAST_STATE_DATA, message);
         }
         broadcaster.sendBroadcast(intent);
+    }
+
+    private void setPopUpMessage() {
+        new ServiceDialogBuilder(this)
+                .setTitle("Time to relax")
+                .setMessage("Take a break for a moment, close your eyes and try to remember something good")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        timeSequence("start", stage);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        timeSequence("start", "relax");
+                        timeSequence("pause", "relax");
+                    }
+                })
+                .setIcon(R.drawable.eye_white_closed)
+                .show();
     }
 
 }
