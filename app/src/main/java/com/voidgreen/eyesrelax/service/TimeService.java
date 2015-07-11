@@ -191,16 +191,16 @@ public class TimeService extends Service {
             switch (stage) {
                 case "work":
                     setStage("relax");
-                    setPopUpMessage();
+                    //setPopUpMessage();
                     break;
                 case "relax":
                     setStage("work");
-                    timeSequence("start", stage);
+
                     break;
                 default:
                     break;
             }
-
+            timeSequence("start", stage);
 
         }
     }
