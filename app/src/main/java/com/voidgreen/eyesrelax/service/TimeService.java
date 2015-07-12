@@ -1,7 +1,6 @@
 package com.voidgreen.eyesrelax.service;
 
 
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -96,11 +96,11 @@ public class TimeService extends Service {
 
                     switch (stage) {
                         case "work":
-                            createNotification("Time to relax", R.drawable.eye_white_open, R.drawable.eye_white_open_notification_large);
+                            startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage, R.drawable.eye_white_open_notification_128, R.drawable.eye_white_open_notification_large);
                             timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 1000, 1000, true);
                             break;
                         case "relax":
-                            createNotification("Time to work", R.drawable.eye_white_closed, R.drawable.eye_white_closed_notification_large);
+                            startCountdownNotification(R.string.relaxStageTitle, R.string.relaxStageMessage, R.drawable.eye_white_closed_notification_128, R.drawable.eye_white_closed_notification_large);
                             timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getRelaxTime(context) * 1000, 1000, true);
                             break;
                         default:
@@ -165,6 +165,7 @@ public class TimeService extends Service {
 
 
     private class EyesRelaxCountDownTimer extends CountDownTimerWithPause {
+        private boolean preRelaxNotification = true;
 
         public EyesRelaxCountDownTimer(long millisOnTimer, long countDownInterval, boolean runAtStart) {
             super(millisOnTimer, countDownInterval, runAtStart);
@@ -180,13 +181,31 @@ public class TimeService extends Service {
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
             String notificationString = Utility.combinationFormatter(millisUntilFinished);
-            updateNotification(notificationString);
+            updateTitleNotification(notificationString);
             sendTimeString(notificationString);
+            if(millisUntilFinished > 30 * 1000) {
+                if(preRelaxNotification) {
+                    preRelaxNotification = false;
+                    switch (stage) {
+                        case "work":
+                            startTimerFinishedNotification(R.string.prerelaxStageTitle, R.string.prerelaxStageTitle,
+                                    R.drawable.eye_white_open, R.drawable.eye_white_open_notification_large);
+                            vibrateShort();
+                            break;
+                        case "relax":
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         @Override
         public void onFinish() {
             finishAll();
+            vibrateLong();
             //stopForeground(true);
             switch (stage) {
                 case "work":
@@ -205,9 +224,9 @@ public class TimeService extends Service {
         }
     }
 
-    private void updateNotification(String notificationString) {
+    private void updateTitleNotification(String notificationString) {
         notificationBuilder.setContentText(notificationString);
-        startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
+        startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
     }
 
     private void finishAll() {
@@ -216,22 +235,52 @@ public class TimeService extends Service {
         if (notificationBuilder != null) {
             notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
             notificationBuilder.setOngoing(false);
-            updateNotification(Constants.ZERO_PROGRESS);
-            startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build());
+            updateTitleNotification(Constants.ZERO_PROGRESS);
+            startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(Constants.NOTIFICATION_ID);
+            mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
         }
         setState("start");
         timer = null;
     }
 
-    public void createNotification(String title, int smallIcon, int largeIcon) {
+    private void startCountdownNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
+        setNotification(titleText, tickerText, smallIcon, largeIcon);
+
+        notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
+        notificationBuilder.setOngoing(true);
+
+        buildNotification(Constants.NOTIFICATION_COUNTDOWN_ID);
+    }
+
+    private void startTimerFinishedNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
+        setNotification(titleText, tickerText, smallIcon, largeIcon);
+
+        //notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
+        notificationBuilder.setOngoing(false);
+
+        buildNotification(Constants.NOTIFICATION_FINISHED_ID);
+
+    }
+
+    private void buildNotification(int notificationId) {
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        Notification notification = notificationBuilder.build();
+        mNotificationManager.notify(Constants.NOTIFICATION_COUNTDOWN_ID, notification);
+
+        startForeground(notificationId, notification);
+    }
+
+    private void setNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
+        Resources resources = getResources();
         notificationBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(smallIcon)
-                        .setContentTitle(title)
-                        .setContentText(Constants.ZERO_PROGRESS);
+                        .setTicker(resources.getString(tickerText))
+                        .setContentTitle(resources.getString(titleText));
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
@@ -240,7 +289,7 @@ public class TimeService extends Service {
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
                 true);
         notificationBuilder.setLargeIcon(bm);
-        notificationBuilder.setOngoing(true);
+
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
@@ -256,13 +305,7 @@ public class TimeService extends Service {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         notificationBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        Notification notification = notificationBuilder.build();
-        mNotificationManager.notify(Constants.NOTIFICATION_ID, notification);
 
-        startForeground(Constants.NOTIFICATION_ID, notification);
     }
 
     public void sendTimeString(String message) {
@@ -299,5 +342,44 @@ public class TimeService extends Service {
                 .setIcon(R.drawable.eye_white_closed)
                 .show();
     }
+
+    private void vibrateLong() {
+        // Get instance of Vibrator from current Context
+        long vt = 100;
+        long dt = 500;
+        long delay = 0;
+        // Each element then alternates between vibrate, sleep, vibrate, sleep...
+        long[] pattern = {delay, vt, dt, vt, dt * 3 / 4, vt, dt / 2, vt, dt / 3, vt, dt / 3};
+
+        vibrate(pattern);
+
+    }
+
+    private void vibrateShort() {
+        // Get instance of Vibrator from current Context
+        long vt = 200;
+        long dt = 200;
+        long delay = 0;
+        // Each element then alternates between vibrate, sleep, vibrate, sleep...
+        long[] pattern = {delay, vt, dt, vt, dt};
+
+        vibrate(pattern);
+
+    }
+
+    private void vibrate(long[] pattern) {
+        // Get instance of Vibrator from current Context
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        // Output yes if can vibrate, no otherwise
+        if (v.hasVibrator()) {
+            // The '-1' here means to vibrate once, as '-1' is out of bounds in the pattern array
+            v.vibrate(pattern, -1);
+        } else {
+
+        }
+    }
+
+
 
 }

@@ -17,7 +17,8 @@ public final class Constants {
     public static final String BROADCAST_STATE_DATA =
             "com.voidgreen.eyesrelax.STATE_DATA";
 
-    public static final int NOTIFICATION_ID = 101;
+    public static final int NOTIFICATION_COUNTDOWN_ID = 101;
+    public static final int NOTIFICATION_FINISHED_ID = 102;
 
     public static final String ZERO_PROGRESS = "00:00:00";
 
