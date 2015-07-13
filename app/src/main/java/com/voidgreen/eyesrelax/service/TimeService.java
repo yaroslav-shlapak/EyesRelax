@@ -1,17 +1,18 @@
 package com.voidgreen.eyesrelax.service;
 
 
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
@@ -21,7 +22,6 @@ import android.util.Log;
 
 import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
-import com.voidgreen.eyesrelax.ServiceDialogBuilder;
 import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
 import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
@@ -31,12 +31,14 @@ import com.voidgreen.eyesrelax.utilities.Utility;
  * Created by Void on 29-Jun-15.
  */
 public class TimeService extends Service {
-    EyesRelaxCountDownTimer timer;
-    NotificationCompat.Builder notificationBuilder;
+    private EyesRelaxCountDownTimer timer;
+    private NotificationCompat.Builder notificationBuilder;
+    private Notification notification;
     final public static String TAG = "TimeService";
-    LocalBroadcastManager broadcaster;
+    private LocalBroadcastManager broadcaster;
     private final IBinder mBinder = new TimeBinder();
-    String state = "start";
+    private String state = "start";
+    private NotificationManager mNotificationManager;
 
     public void setStage(String stage) {
         this.stage = stage;
@@ -62,13 +64,15 @@ public class TimeService extends Service {
 
     public void setState(String state) {
         this.state = state;
-        Log.d("TimeService", "setState : " + state );
+        Log.d("TimeService", "setState : " + state);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         broadcaster = LocalBroadcastManager.getInstance(this);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        registerBroadcastReceiver();
 
     }
 
@@ -86,58 +90,62 @@ public class TimeService extends Service {
 
     private void timeSequence(String task, String stage) {
         Context context = getApplicationContext();
+
         switch (task) {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
+                setState("stop");
                 Log.d("onStartCommand", "start");
                 if(timer == null) {
                     Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
-
+                    long  stageTime;
                     switch (stage) {
                         case "work":
-                            startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage, R.drawable.eye_white_open_notification_128, R.drawable.eye_white_open_notification_large);
-                            timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getWorkTime(context) * 1000, 1000, true);
+                            startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
+                                    R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
+                            stageTime = SettingsDataUtility.getWorkTime(context) * Constants.SEC_TO_MILLIS_MULT + Constants.SEC_TO_MILLIS_MULT;
                             break;
                         case "relax":
-                            startCountdownNotification(R.string.relaxStageTitle, R.string.relaxStageMessage, R.drawable.eye_white_closed_notification_128, R.drawable.eye_white_closed_notification_large);
-                            timer = new EyesRelaxCountDownTimer(SettingsDataUtility.getRelaxTime(context) * 1000, 1000, true);
+                            startCountdownNotification(R.string.relaxStageTitle, R.string.relaxStageMessage,
+                                    R.drawable.ic_eye_closed, R.drawable.eye_white_closed_notification_large);
+                            stageTime = SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT + Constants.SEC_TO_MILLIS_MULT;
                             break;
                         default:
+                            stageTime = 0;
                             break;
                     }
 
+                    timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                     timer.create();
+                    Log.d("timeSequence", "start");
                 }
                 timer.resume();
-                setState("stop");
 
                 break;
 
             case "pause":
-
+                setState("resume");
                 if(timer != null) {
-                    Log.d("onStartCommand", "pause");
+                    Log.d("timeSequence", "pause");
                     timer.pause();
                 }
-                setState("resume");
 
                 break;
 
             case "resume":
+                setState("pause");
                 if(timer != null) {
+                    Log.d("timeSequence", "resume");
                     timer.resume();
                 }
-                setState("pause");
+
                 break;
 
             case "stop":
-                if(timer != null) {
-                    timer.cancel();
-                    Log.d("onStartCommand", "cancel");
-                }
-                setState("start");
-                setStage("work");
+                Log.d("timeSequence", "stop");
+                stopTimer();
+                stopSelf();
 
                 break;
 
@@ -148,14 +156,23 @@ public class TimeService extends Service {
         }
     }
 
+    private void stopTimer() {
+        setStage("work");
+        if(timer != null) {
+            timer.cancel();
+            Log.d("onStartCommand", "cancel");
+        }
+        timer = null;
+        setState("start");
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (timer != null) {
-            Log.d("onDestroy", "cancelTimer");
-            timer.cancel();
-        }
-        finishAll();
+        stopTimer();
+        Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
+        sendTimeString(Constants.ZERO_PROGRESS);
+        mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
     }
 
     @Override
@@ -181,7 +198,7 @@ public class TimeService extends Service {
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
             String notificationString = Utility.combinationFormatter(millisUntilFinished);
-            updateTitleNotification(notificationString);
+            updateNotification(notificationString);
             sendTimeString(notificationString);
             if(millisUntilFinished > 30 * 1000) {
                 if(preRelaxNotification) {
@@ -189,7 +206,7 @@ public class TimeService extends Service {
                     switch (stage) {
                         case "work":
                             startTimerFinishedNotification(R.string.prerelaxStageTitle, R.string.prerelaxStageTitle,
-                                    R.drawable.eye_white_open, R.drawable.eye_white_open_notification_large);
+                                    R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
                             vibrateShort();
                             break;
                         case "relax":
@@ -206,6 +223,7 @@ public class TimeService extends Service {
         public void onFinish() {
             finishAll();
             vibrateLong();
+            Log.d("TimerFinished", stage);
             //stopForeground(true);
             switch (stage) {
                 case "work":
@@ -224,25 +242,22 @@ public class TimeService extends Service {
         }
     }
 
-    private void updateTitleNotification(String notificationString) {
-        notificationBuilder.setContentText(notificationString);
-        startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
+    private void updateNotification(String notificationString) {
+        if (notificationBuilder != null) {
+            notificationBuilder.setContentText(notificationString);
+            //startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
+            mNotificationManager.notify(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
+        }
     }
 
     private void finishAll() {
         sendTimeString(Constants.ZERO_PROGRESS);
+        updateNotification(Constants.ZERO_PROGRESS);
+
         Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
-        if (notificationBuilder != null) {
-            notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
-            notificationBuilder.setOngoing(false);
-            updateTitleNotification(Constants.ZERO_PROGRESS);
-            startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
-        }
         setState("start");
         timer = null;
+
     }
 
     private void startCountdownNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
@@ -252,6 +267,7 @@ public class TimeService extends Service {
         notificationBuilder.setOngoing(true);
 
         buildNotification(Constants.NOTIFICATION_COUNTDOWN_ID);
+
     }
 
     private void startTimerFinishedNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
@@ -284,11 +300,11 @@ public class TimeService extends Service {
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);
 
-        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), largeIcon),
+/*        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), largeIcon),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
                 getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
                 true);
-        notificationBuilder.setLargeIcon(bm);
+        notificationBuilder.setLargeIcon(bm);*/
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
@@ -306,6 +322,7 @@ public class TimeService extends Service {
                 );
         notificationBuilder.setContentIntent(resultPendingIntent);
 
+
     }
 
     public void sendTimeString(String message) {
@@ -316,40 +333,13 @@ public class TimeService extends Service {
         broadcaster.sendBroadcast(intent);
     }
 
-    public void sendState(String message) {
-        Intent intent = new Intent(Constants.BROADCAST_STATE_NAME);
-        if(message != null) {
-            intent.putExtra(Constants.BROADCAST_STATE_DATA, message);
-        }
-        broadcaster.sendBroadcast(intent);
-    }
-
-    private void setPopUpMessage() {
-        new ServiceDialogBuilder(this)
-                .setTitle("Time to relax")
-                .setMessage("Take a break for a moment, close your eyes and try to remember something good")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        timeSequence("start", stage);
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        timeSequence("start", "relax");
-                        timeSequence("pause", "relax");
-                    }
-                })
-                .setIcon(R.drawable.eye_white_closed)
-                .show();
-    }
-
     private void vibrateLong() {
         // Get instance of Vibrator from current Context
         long vt = 100;
         long dt = 500;
         long delay = 0;
         // Each element then alternates between vibrate, sleep, vibrate, sleep...
-        long[] pattern = {delay, vt, dt, vt, dt * 3 / 4, vt, dt / 2, vt, dt / 3, vt, dt / 3};
+        long[] pattern = {delay, vt, dt, vt, dt * 4 / 5, vt, dt * 2 / 3, vt, dt / 3, vt, dt / 3, vt, dt / 3};
 
         vibrate(pattern);
 
@@ -368,6 +358,7 @@ public class TimeService extends Service {
     }
 
     private void vibrate(long[] pattern) {
+        Log.d("vibrate", pattern.toString());
         // Get instance of Vibrator from current Context
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -381,5 +372,66 @@ public class TimeService extends Service {
     }
 
 
+    private void registerBroadcastReceiver() {
+        final IntentFilter theFilter = new IntentFilter();
+        /** System Defined Broadcast */
+        theFilter.addAction(Intent.ACTION_SCREEN_ON);
+        theFilter.addAction(Intent.ACTION_SCREEN_OFF);
+
+        BroadcastReceiver screenOnOffReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String strAction = intent.getAction();
+
+                KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                CountDownTimer countDownTimer = null;
+
+                if(stage.contentEquals("work")) {
+                    if (strAction.equals(Intent.ACTION_SCREEN_OFF) || strAction.equals(Intent.ACTION_SCREEN_ON)) {
+                        if (myKM.inKeyguardRestrictedInputMode()) {
+                            timeSequence("pause", "work");
+                            Log.d("screenOnOffReceiver", "pause");
+                            countDownTimer = new CountDownTimer(
+                                    SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT, 1 * Constants.SEC_TO_MILLIS_MULT) {
+                                long millis;
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+                                    millis = millisUntilFinished;
+                                }
+
+                                @Override
+                                public void onFinish() {
+                                    if(millis < (2 * Constants.SEC_TO_MILLIS_MULT)) {
+                                        stopTimer();
+                                    }
+                                    Log.d("screenOnOffReceiver", "onFinish");
+                                }
+                            };
+                            countDownTimer.start();
+                            //System.out.println("Screen off " + "LOCKED");
+                        } else {
+                            if (timer != null) {
+                                timeSequence("resume", "work");
+                                Log.d("screenOnOffReceiver", "resume");
+                            } else {
+                                timeSequence("start", "work");
+                                Log.d("screenOnOffReceiver", "start");
+                            }
+
+                            if(countDownTimer != null) {
+                                countDownTimer.cancel();
+
+                            }
+
+
+                            //System.out.println("Screen off " + "UNLOCKED");
+                        }
+                    }
+                }
+            }
+        };
+
+        getApplicationContext().registerReceiver(screenOnOffReceiver, theFilter);
+    }
 
 }

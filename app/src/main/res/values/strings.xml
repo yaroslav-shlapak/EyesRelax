@@ -20,10 +20,10 @@
 
     <string name="workStageTitle">Time to work</string>
     <string name="relaxStageTitle">Time to relax</string>
-    <string name="relaxStageMessage">Take a break for a moment, close your eyes and try to remember something good</string>
+    <string name="relaxStageMessage">Take a break</string>
     <string name="workStageMessage">Start working with EyesRelax</string>
 
-    <string name="prerelaxStageMessage">30 seconds til relax</string>
+    <string name="prerelaxStageMessage">30 seconds till relax</string>
     <string name="prerelaxStageTitle">Prepare for relax</string>
 
 </resources>
