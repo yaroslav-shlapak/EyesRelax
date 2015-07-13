@@ -40,6 +40,7 @@ public class TimeService extends Service {
     private String state = "start";
     private NotificationManager mNotificationManager;
     BroadcastReceiver screenOnOffReceiver;
+    private boolean uiForbid;
 
     public void setStage(String stage) {
         this.stage = stage;
@@ -85,6 +86,7 @@ public class TimeService extends Service {
         if (intent !=null && intent.getExtras()!=null) {
             task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
+        uiForbid = true;
         timeSequence(task, stage);
         return super.onStartCommand(intent, flags, startId);
     }
@@ -96,6 +98,7 @@ public class TimeService extends Service {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
                 setState("stop");
+                uiForbid = false;
                 //Log.d("onStartCommand", "start");
                 if(timer == null) {
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
@@ -124,9 +127,8 @@ public class TimeService extends Service {
                             stageTime = 0;
                             break;
                     }
-                    //Log.d("timeSequence", "start");
+                    Log.d("timeSequence", "start");
                 }
-
                 break;
 
             case "pause":
@@ -138,10 +140,8 @@ public class TimeService extends Service {
                 break;
 
             case "stop":
-                //Log.d("timeSequence", "stop");
                 stopTimer();
                 stopSelf();
-
                 break;
 
             default:
@@ -155,7 +155,7 @@ public class TimeService extends Service {
         setStage("work");
         if(timer != null) {
             timer.cancel();
-            //Log.d("onStartCommand", "cancel");
+            Log.d("timeSequence", "stop");
         }
         timer = null;
         setState("start");
@@ -167,13 +167,12 @@ public class TimeService extends Service {
             Log.d("timeSequence", "pause");
             timer.pause();
         }
-
     }
 
     private void resumeTimer() {
         setState("pause");
         if(timer != null) {
-            //Log.d("timeSequence", "resume");
+            Log.d("timeSequence", "resume");
             timer.resume();
         }
     }
@@ -398,7 +397,7 @@ public class TimeService extends Service {
                 String strAction = intent.getAction();
 
 
-                if(stage.contentEquals("work")) {
+                if(!uiForbid && stage.contentEquals("work")) {
                     if (strAction.equals(Intent.ACTION_SCREEN_OFF) && state.contentEquals("stop")) {
                             if(countDownTimer == null) {
                                 pauseTimer();
