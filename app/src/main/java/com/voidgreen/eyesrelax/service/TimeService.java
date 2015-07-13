@@ -1,7 +1,6 @@
 package com.voidgreen.eyesrelax.service;
 
 
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,6 +13,7 @@ import android.content.res.Resources;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -39,10 +39,11 @@ public class TimeService extends Service {
     private final IBinder mBinder = new TimeBinder();
     private String state = "start";
     private NotificationManager mNotificationManager;
+    BroadcastReceiver screenOnOffReceiver;
 
     public void setStage(String stage) {
         this.stage = stage;
-        Log.d("TimeService", "setStage : " + stage );
+        //Log.d("TimeService", "setStage : " + stage );
     }
 
     String stage = "work";
@@ -64,7 +65,7 @@ public class TimeService extends Service {
 
     public void setState(String state) {
         this.state = state;
-        Log.d("TimeService", "setState : " + state);
+        //Log.d("TimeService", "setState : " + state);
     }
 
     @Override
@@ -95,55 +96,49 @@ public class TimeService extends Service {
             case "start":
                 //Utility.showToast(context, "onHandleIntent:start");
                 setState("stop");
-                Log.d("onStartCommand", "start");
+                //Log.d("onStartCommand", "start");
                 if(timer == null) {
-                    Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
-                    Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
+                    //Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
+                    //Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
                     long  stageTime;
                     switch (stage) {
                         case "work":
-                            startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
-                                    R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
-                            stageTime = SettingsDataUtility.getWorkTime(context) * Constants.SEC_TO_MILLIS_MULT + Constants.SEC_TO_MILLIS_MULT;
+                            if(isScreenOn()) {
+                                startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
+                                        R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
+                                stageTime = SettingsDataUtility.getWorkTime(context) * Constants.SEC_TO_MILLIS_MULT
+                                        + Constants.SEC_TO_MILLIS_MULT;
+                                timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
+                                timer.create();
+                            }
                             break;
                         case "relax":
                             startCountdownNotification(R.string.relaxStageTitle, R.string.relaxStageMessage,
                                     R.drawable.ic_eye_closed, R.drawable.eye_white_closed_notification_large);
-                            stageTime = SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT + Constants.SEC_TO_MILLIS_MULT;
+                            stageTime = SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT
+                                    + Constants.SEC_TO_MILLIS_MULT;
+                            timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
+                            timer.create();
                             break;
                         default:
                             stageTime = 0;
                             break;
                     }
-
-                    timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
-                    timer.create();
-                    Log.d("timeSequence", "start");
+                    //Log.d("timeSequence", "start");
                 }
-                timer.resume();
 
                 break;
 
             case "pause":
-                setState("resume");
-                if(timer != null) {
-                    Log.d("timeSequence", "pause");
-                    timer.pause();
-                }
-
+                pauseTimer();
                 break;
 
             case "resume":
-                setState("pause");
-                if(timer != null) {
-                    Log.d("timeSequence", "resume");
-                    timer.resume();
-                }
-
+                resumeTimer();
                 break;
 
             case "stop":
-                Log.d("timeSequence", "stop");
+                //Log.d("timeSequence", "stop");
                 stopTimer();
                 stopSelf();
 
@@ -151,7 +146,7 @@ public class TimeService extends Service {
 
             default:
                 //Utility.showToast(context, "onHandleIntent:default");
-                Log.d("onStartCommand", "default");
+                //Log.d("onStartCommand", "default");
                 break;
         }
     }
@@ -160,10 +155,27 @@ public class TimeService extends Service {
         setStage("work");
         if(timer != null) {
             timer.cancel();
-            Log.d("onStartCommand", "cancel");
+            //Log.d("onStartCommand", "cancel");
         }
         timer = null;
         setState("start");
+    }
+
+    private void pauseTimer() {
+        setState("resume");
+        if(timer != null) {
+            Log.d("timeSequence", "pause");
+            timer.pause();
+        }
+
+    }
+
+    private void resumeTimer() {
+        setState("pause");
+        if(timer != null) {
+            //Log.d("timeSequence", "resume");
+            timer.resume();
+        }
     }
 
     @Override
@@ -173,6 +185,7 @@ public class TimeService extends Service {
         Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
         sendTimeString(Constants.ZERO_PROGRESS);
         mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
+        getApplicationContext().unregisterReceiver(screenOnOffReceiver);
     }
 
     @Override
@@ -223,7 +236,7 @@ public class TimeService extends Service {
         public void onFinish() {
             finishAll();
             vibrateLong();
-            Log.d("TimerFinished", stage);
+            //Log.d("TimerFinished", stage);
             //stopForeground(true);
             switch (stage) {
                 case "work":
@@ -358,7 +371,7 @@ public class TimeService extends Service {
     }
 
     private void vibrate(long[] pattern) {
-        Log.d("vibrate", pattern.toString());
+        //Log.d("vibrate", pattern.toString());
         // Get instance of Vibrator from current Context
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -378,40 +391,39 @@ public class TimeService extends Service {
         theFilter.addAction(Intent.ACTION_SCREEN_ON);
         theFilter.addAction(Intent.ACTION_SCREEN_OFF);
 
-        BroadcastReceiver screenOnOffReceiver = new BroadcastReceiver() {
+        screenOnOffReceiver = new BroadcastReceiver() {
+            CountDownTimer countDownTimer = null;
             @Override
             public void onReceive(Context context, Intent intent) {
                 String strAction = intent.getAction();
 
-                KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-                CountDownTimer countDownTimer = null;
 
                 if(stage.contentEquals("work")) {
-                    if (strAction.equals(Intent.ACTION_SCREEN_OFF) || strAction.equals(Intent.ACTION_SCREEN_ON)) {
-                        if (myKM.inKeyguardRestrictedInputMode()) {
-                            timeSequence("pause", "work");
-                            Log.d("screenOnOffReceiver", "pause");
-                            countDownTimer = new CountDownTimer(
-                                    SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT, 1 * Constants.SEC_TO_MILLIS_MULT) {
-                                long millis;
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-                                    millis = millisUntilFinished;
-                                }
+                    if (strAction.equals(Intent.ACTION_SCREEN_OFF) && state.contentEquals("stop")) {
+                            if(countDownTimer == null) {
+                                pauseTimer();
+                                Log.d("screenOnOffReceiver", "pause");
+                                countDownTimer = new CountDownTimer(
+                                        SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT,
+                                        Constants.SEC_TO_MILLIS_MULT) {
 
-                                @Override
-                                public void onFinish() {
-                                    if(millis < (2 * Constants.SEC_TO_MILLIS_MULT)) {
-                                        stopTimer();
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
                                     }
-                                    Log.d("screenOnOffReceiver", "onFinish");
-                                }
-                            };
-                            countDownTimer.start();
+
+                                    @Override
+                                    public void onFinish() {
+                                        stopTimer();
+                                        Log.d("screenOnOffReceiver", "onFinish");
+                                    }
+                                };
+                                countDownTimer.start();
+                            }
                             //System.out.println("Screen off " + "LOCKED");
-                        } else {
+                        } else if(strAction.equals(Intent.ACTION_SCREEN_ON) && (state.contentEquals("start")
+                            || state.contentEquals("resume"))) {
                             if (timer != null) {
-                                timeSequence("resume", "work");
+                                resumeTimer();
                                 Log.d("screenOnOffReceiver", "resume");
                             } else {
                                 timeSequence("start", "work");
@@ -420,18 +432,23 @@ public class TimeService extends Service {
 
                             if(countDownTimer != null) {
                                 countDownTimer.cancel();
-
+                                countDownTimer = null;
+                                Log.d("screenOnOffReceiver", "cancelTimer");
                             }
-
 
                             //System.out.println("Screen off " + "UNLOCKED");
                         }
                     }
                 }
-            }
+
         };
 
         getApplicationContext().registerReceiver(screenOnOffReceiver, theFilter);
+    }
+
+    private boolean isScreenOn() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        return powerManager.isScreenOn();
     }
 
 }
