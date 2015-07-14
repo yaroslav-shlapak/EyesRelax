@@ -12,8 +12,9 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.voidgreen.eyesrelax.MainActivity"
-            android:label="@string/app_name">
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/EyesrelaxTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,13 +23,15 @@
         </activity>
         <activity
             android:name=".EyesRelaxSettingsActivity"
-            android:label="@string/action_settings">
-
+            android:label="@string/action_settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/SettingsTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
-            />
-
         </activity>
 
         <service android:name=".service.TimeService"
