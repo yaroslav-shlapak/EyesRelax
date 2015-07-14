@@ -13,7 +13,6 @@ import android.content.res.Resources;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -106,7 +105,7 @@ public class TimeService extends Service {
                     long  stageTime;
                     switch (stage) {
                         case "work":
-                            if(isScreenOn()) {
+                            if(Utility.isScreenOn(context)) {
                                 startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
                                         R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
                                 stageTime = SettingsDataUtility.getWorkTime(context) * Constants.SEC_TO_MILLIS_MULT
@@ -192,6 +191,12 @@ public class TimeService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d("TimeService", "onBind");
         return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        //getApplicationContext().unregisterReceiver(screenOnOffReceiver);
+        return super.onUnbind(intent);
     }
 
 
@@ -401,12 +406,10 @@ public class TimeService extends Service {
         };
 
         getApplicationContext().registerReceiver(screenOnOffReceiver, theFilter);
+        Log.d("TimeService", "registerBroadcastReceiver");
     }
 
-    private boolean isScreenOn() {
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        return powerManager.isScreenOn();
-    }
+
 
 
 }

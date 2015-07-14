@@ -1,7 +1,9 @@
 package com.voidgreen.eyesrelax.utilities;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.PowerManager;
 import android.widget.Toast;
 
 import com.voidgreen.eyesrelax.R;
@@ -48,5 +50,10 @@ public class Utility {
         SharedPreferences.Editor editor = batteryInfoSharedPref.edit();
         editor.putString(context.getString(R.string.timeString), value);
         editor.apply();
+    }
+
+    public static boolean isScreenOn(Context context) {
+        PowerManager powerManager = (PowerManager) context.getSystemService(Service.POWER_SERVICE);
+        return powerManager.isScreenOn();
     }
 }

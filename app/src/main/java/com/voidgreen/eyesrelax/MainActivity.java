@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.voidgreen.eyesrelax.fragments.PauseStopButtonsFragment;
 import com.voidgreen.eyesrelax.fragments.StartButtonFragment;
 import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Utility;
 
 
 public class MainActivity extends ActionBarActivity
@@ -38,7 +39,8 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onStop() {
         super.onStop();
-
+        Log.d("MainActivity", "onStop");
+        unbindTimeService();
 
     }
     public void unbindTimeService() {
@@ -50,11 +52,13 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void bindTimeService() {
-        Intent intent = new Intent(this, TimeService.class);
-        intent.addCategory(TimeService.TAG);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        setActivityUI();
-        Log.d("MainActivity", "bindTimeService");
+        if(Utility.isScreenOn(getApplicationContext())) {
+            Intent intent = new Intent(this, TimeService.class);
+            intent.addCategory(TimeService.TAG);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            setActivityUI();
+            Log.d("MainActivity", "bindTimeService");
+        }
     }
 
 
@@ -160,6 +164,7 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+
     @Override
     public void onStartButtonClick() {
         setPauseStopButtonFragment("Pause");
@@ -176,12 +181,16 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-            //Log.d("mConnection", "onServiceConnected");
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            setActivityUI();
+            if(Utility.isScreenOn(getApplicationContext())) {
+                Log.d("mConnection", "onServiceConnected");
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
+                mService = binder.getService();
+                mBound = true;
+                setActivityUI();
+            } else {
+                mBound = false;
+            }
         }
 
         @Override
