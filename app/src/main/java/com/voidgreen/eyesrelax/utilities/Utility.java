@@ -3,7 +3,10 @@ package com.voidgreen.eyesrelax.utilities;
 import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.display.DisplayManager;
+import android.os.Build;
 import android.os.PowerManager;
+import android.view.Display;
 import android.widget.Toast;
 
 import com.voidgreen.eyesrelax.R;
@@ -52,8 +55,24 @@ public class Utility {
         editor.apply();
     }
 
+    /**
+     * Is the screen of the device on.
+     * @param context the context
+     * @return true when (at least one) screen is on
+     */
     public static boolean isScreenOn(Context context) {
-        PowerManager powerManager = (PowerManager) context.getSystemService(Service.POWER_SERVICE);
-        return powerManager.isScreenOn();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            boolean screenOn = false;
+            for (Display display : dm.getDisplays()) {
+                if (display.getState() != Display.STATE_OFF) {
+                    screenOn = true;
+                }
+            }
+            return screenOn;
+        } else {
+            PowerManager powerManager = (PowerManager) context.getSystemService(Service.POWER_SERVICE);
+            return powerManager.isScreenOn();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.voidgreen.eyesrelax.service;
 
 
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.voidgreen.eyesrelax.MainActivity;
@@ -108,8 +110,8 @@ public class TimeService extends Service {
                             if(Utility.isScreenOn(context)) {
                                 startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
                                         R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
-                                stageTime = SettingsDataUtility.getWorkTime(context) * Constants.SEC_TO_MILLIS_MULT
-                                        + Constants.MIN_TO_MILLIS_MULT;
+                                stageTime = SettingsDataUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
+                                        + Constants.SEC_TO_MILLIS_MULT;
                                 timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                                 timer.create();
                             }
@@ -353,62 +355,68 @@ public class TimeService extends Service {
         /** System Defined Broadcast */
         theFilter.addAction(Intent.ACTION_SCREEN_ON);
         theFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        theFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
 
-        screenOnOffReceiver = new BroadcastReceiver() {
-            CountDownTimer countDownTimer = null;
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String strAction = intent.getAction();
-
-
-                if(!uiForbid && stage.contentEquals("work")) {
-                    if (strAction.equals(Intent.ACTION_SCREEN_OFF)) {
-                            if(countDownTimer == null) {
-                                pauseTimer();
-                                Log.d("screenOnOffReceiver", "pause");
-                                countDownTimer = new CountDownTimer(
-                                        SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT,
-                                        Constants.SEC_TO_MILLIS_MULT) {
-
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        stopTimer();
-                                        Log.d("screenOnOffReceiver", "onFinish");
-                                    }
-                                };
-                                countDownTimer.start();
-                            }
-                            //System.out.println("Screen off " + "LOCKED");
-                        } else if(strAction.equals(Intent.ACTION_SCREEN_ON)) {
-                            if (timer != null) {
-                                resumeTimer();
-                                Log.d("screenOnOffReceiver", "resume");
-                            } else {
-                                timeSequence("start", "work");
-                                Log.d("screenOnOffReceiver", "start");
-                            }
-
-                            if(countDownTimer != null) {
-                                countDownTimer.cancel();
-                                countDownTimer = null;
-                                Log.d("screenOnOffReceiver", "cancelTimer");
-                            }
-
-                            //System.out.println("Screen off " + "UNLOCKED");
-                        }
-                    }
-                }
-
-        };
-
+        screenOnOffReceiver = new ScreenBroadcastReceiver();
         getApplicationContext().registerReceiver(screenOnOffReceiver, theFilter);
         Log.d("TimeService", "registerBroadcastReceiver");
     }
 
+    public class ScreenBroadcastReceiver extends BroadcastReceiver {
+        CountDownTimer countDownTimer = null;
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String strAction = intent.getAction();
+            String telephonyExtra = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+
+            Log.d("ScreenBroadcastReceiver", strAction);
+            if(!uiForbid && stage.contentEquals("work")) {
+
+                if (strAction.equals(Intent.ACTION_SCREEN_OFF) || (telephonyExtra != null
+                        && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)
+                        || telephonyExtra.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)))) {
+                    if(countDownTimer == null) {
+                        pauseTimer();
+                        Log.d("ScreenBroadcastReceiver", "pause");
+                        countDownTimer = new CountDownTimer(
+                                SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT,
+                                Constants.SEC_TO_MILLIS_MULT) {
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                stopTimer();
+                                Log.d("ScreenBroadcastReceiver", "onFinish");
+                            }
+                        };
+                        countDownTimer.start();
+                    }
+                    //System.out.println("Screen off " + "LOCKED");
+                } else if(strAction.equals(Intent.ACTION_SCREEN_ON) || (telephonyExtra != null
+                        && telephonyExtra.equals(TelephonyManager.EXTRA_STATE_IDLE))) {
+                    if (timer != null) {
+                        resumeTimer();
+                        Log.d("ScreenBroadcastReceiver", "resume");
+                    } else {
+                        timeSequence("start", "work");
+                        Log.d("ScreenBroadcastReceiver", "start");
+                    }
+
+                    if(countDownTimer != null) {
+                        countDownTimer.cancel();
+                        countDownTimer = null;
+                        Log.d("ScreenBroadcastReceiver", "cancelTimer");
+                    }
+
+                    //System.out.println("Screen off " + "UNLOCKED");
+                }
+            }
+        }
+
+    };
 
 
 
