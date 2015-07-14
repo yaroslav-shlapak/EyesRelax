@@ -104,6 +104,7 @@ public abstract class CountDownTimerWithPause {
      */
     public void pause() {
         if (isRunning()) {
+            //Log.d("CountDownTimerWithPause", "pause");
             mPauseTimeRemaining = timeLeft();
             cancel();
         }

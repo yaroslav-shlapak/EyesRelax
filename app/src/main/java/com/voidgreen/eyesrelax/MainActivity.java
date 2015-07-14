@@ -31,36 +31,46 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        Intent intent = new Intent(this, TimeService.class);
-        intent.addCategory(TimeService.TAG);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        setActivityUI();
+        Log.d("MainActivity", "onCreate");
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        // Unbind from the service
-        unbindTimeService();
+
 
     }
     public void unbindTimeService() {
         if (mBound) {
+            Log.d("MainActivity", "unbindTimeService");
             unbindService(mConnection);
             mBound = false;
         }
     }
 
+    private void bindTimeService() {
+        Intent intent = new Intent(this, TimeService.class);
+        intent.addCategory(TimeService.TAG);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        setActivityUI();
+        Log.d("MainActivity", "bindTimeService");
+    }
+
+
     @Override
     protected void onPause() {
         super.onPause();
-        setActivityUI();
+        // Unbind from the service
+        Log.d("MainActivity", "onPause");
+        unbindTimeService();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("MainActivity", "onResume");
+        bindTimeService();
     }
 
     private void setActivityUI() {
@@ -69,32 +79,28 @@ public class MainActivity extends ActionBarActivity
             // However, if this call were something that might hang, then this request should
             // occur in a separate thread to avoid slowing down the activity performance.
             String state = mService.getState();
+            Log.d("setActivityUI", state);
             switch (state) {
                 case "start":
                     setStartButtonFragment();
-                    Log.d("ActivityOnCreate", "start");
                     break;
 
                 case "pause":
                     setPauseStopButtonFragment("Pause");
-                    Log.d("ActivityOnCreate", "pause");
-
                     break;
 
                 case "resume":
                     setPauseStopButtonFragment("Resume");
-                    Log.d("ActivityOnCreate", "resume");
                     break;
 
                 case "stop":
                     setPauseStopButtonFragment("Pause");
                     unbindTimeService();
-                    Log.d("ActivityOnCreate", "stop");
                     break;
 
                 default:
                     setStartButtonFragment();
-                    Log.d("ActivityOnCreate", "default");
+
                     break;
             }
         } else {
@@ -170,7 +176,7 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-            Log.d("mConnection", "onServiceConnected");
+            //Log.d("mConnection", "onServiceConnected");
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
             mService = binder.getService();

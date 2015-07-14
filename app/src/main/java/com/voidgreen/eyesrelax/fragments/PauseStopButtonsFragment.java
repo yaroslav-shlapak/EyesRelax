@@ -94,13 +94,11 @@ public class PauseStopButtonsFragment extends Fragment {
 
         switch(pauseBattonText) {
             case "Pause":
-
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.pauseTask));
                 activity.startService(intent);
                 pauseButton.setText("Resume");
                 break;
             case "Resume":
-
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.resumeTask));
                 activity.startService(intent);
                 pauseButton.setText("Pause");
