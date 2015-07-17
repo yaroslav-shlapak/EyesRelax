@@ -15,7 +15,7 @@ public class AnimationProgressBarUtility {
 
     public static void initAnimation(ProgressBar progressBar, Context context) {
         objectAnimator = ObjectAnimator.ofInt(progressBar, "progress", 1, 100);
-        objectAnimator.setDuration(SettingsDataUtility.getRelaxTime(context)); //in milliseconds
+        objectAnimator.setDuration(SharedPrefUtility.getRelaxTime(context)); //in milliseconds
         objectAnimator.setupStartValues();
         objectAnimator.setInterpolator(new DecelerateInterpolator());
     }

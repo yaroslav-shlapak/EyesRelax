@@ -1,7 +1,6 @@
 package com.voidgreen.eyesrelax.service;
 
 
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,7 +23,8 @@ import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.CountDownTimerWithPause;
-import com.voidgreen.eyesrelax.utilities.SettingsDataUtility;
+import com.voidgreen.eyesrelax.utilities.SharedPrefUtility;
+import com.voidgreen.eyesrelax.utilities.SoundUtility;
 import com.voidgreen.eyesrelax.utilities.Utility;
 import com.voidgreen.eyesrelax.utilities.VibratorUtility;
 
@@ -110,7 +110,7 @@ public class TimeService extends Service {
                             if(Utility.isScreenOn(context)) {
                                 startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
                                         R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
-                                stageTime = SettingsDataUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
+                                stageTime = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
                                         + Constants.SEC_TO_MILLIS_MULT;
                                 timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                                 timer.create();
@@ -119,7 +119,7 @@ public class TimeService extends Service {
                         case "relax":
                             startCountdownNotification(R.string.relaxStageTitle, R.string.relaxStageMessage,
                                     R.drawable.ic_eye_closed, R.drawable.eye_white_closed_notification_large);
-                            stageTime = SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT
+                            stageTime = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT
                                     + Constants.SEC_TO_MILLIS_MULT;
                             timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                             timer.create();
@@ -227,7 +227,9 @@ public class TimeService extends Service {
                         case "work":
                             startTimerFinishedNotification(R.string.prerelaxStageTitle, R.string.prerelaxStageTitle,
                                     R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
-                            VibratorUtility.vibrateShort(getApplicationContext());
+                            Context context = getApplicationContext();
+                            VibratorUtility.vibrateShort(context);
+                            SoundUtility.playNotify(context);
                             break;
                         case "relax":
 
@@ -243,15 +245,19 @@ public class TimeService extends Service {
         public void onFinish() {
             finishAll();
             VibratorUtility.vibrateLong(getApplicationContext());
+            Context context = getApplicationContext();
+
             //Log.d("TimerFinished", stage);
             //stopForeground(true);
             switch (stage) {
                 case "work":
                     setStage("relax");
+                    SoundUtility.playWorkEnd(context);
                     //setPopUpMessage();
                     break;
                 case "relax":
                     setStage("work");
+                    SoundUtility.playRelaxEnd(context);
 
                     break;
                 default:
@@ -379,7 +385,7 @@ public class TimeService extends Service {
                         pauseTimer();
                         Log.d("ScreenBroadcastReceiver", "pause");
                         countDownTimer = new CountDownTimer(
-                                SettingsDataUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT,
+                                SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT,
                                 Constants.SEC_TO_MILLIS_MULT) {
 
                             @Override

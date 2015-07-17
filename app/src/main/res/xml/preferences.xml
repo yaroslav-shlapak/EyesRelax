@@ -12,6 +12,25 @@
             android:key="@string/pref_key_work_period"
             android:summary="Work time"
             android:title="@string/pref_title_work_period" />
+        <CheckBoxPreference
+            android:key="@string/pref_key_30s_notification"
+            android:title="@string/pref_title_30s_notification"
+            android:defaultValue="false"/>
+        />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="ALARM SETTINGS">
+        <CheckBoxPreference
+            android:key="@string/pref_key_vibration"
+            android:title="@string/pref_title_vibration"
+            android:defaultValue="false"/>
+        />
+
+        <CheckBoxPreference
+            android:key="@string/pref_key_sound"
+            android:title="@string/pref_title_sound"
+            android:defaultValue="false"/>
+        />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="OTHER">
