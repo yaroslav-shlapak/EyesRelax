@@ -220,14 +220,15 @@ public class TimeService extends Service {
             Log.d("onTick", notificationString);
             updateNotification(notificationString);
             sendTimeString(notificationString);
-            if(millisUntilFinished < 30 * Constants.SEC_TO_MILLIS_MULT) {
+            Context context = getApplicationContext();
+            if(SharedPrefUtility.is30sEnabled(context) && millisUntilFinished < 30 * Constants.SEC_TO_MILLIS_MULT) {
                 if(preRelaxNotification) {
                     preRelaxNotification = false;
                     switch (stage) {
                         case "work":
                             startTimerFinishedNotification(R.string.prerelaxStageTitle, R.string.prerelaxStageTitle,
                                     R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
-                            Context context = getApplicationContext();
+
                             VibratorUtility.vibrateShort(context);
                             SoundUtility.playNotify(context);
                             break;

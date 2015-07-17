@@ -45,4 +45,10 @@ public class SharedPrefUtility {
         return sharedPreferences.getBoolean(resources.getString(R.string.pref_key_vibration), false);
     }
 
+    public static boolean is30sEnabled(Context context) {
+        Resources resources = context.getResources();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        return sharedPreferences.getBoolean(resources.getString(R.string.pref_key_30s_notification), false);
+    }
+
 }

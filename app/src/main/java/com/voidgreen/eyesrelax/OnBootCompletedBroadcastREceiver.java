@@ -11,7 +11,7 @@ import com.voidgreen.eyesrelax.utilities.SharedPrefUtility;
 /**
  * Created by Void on 17-Jul-15.
  */
-public class OnBootCompletedBroadcastREceiver extends BroadcastReceiver {
+public class OnBootCompletedBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
