@@ -34,6 +34,12 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name="com.example.OnBootCompletedBroadcastREceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".service.TimeService"
             android:exported="false"/>
     </application>
