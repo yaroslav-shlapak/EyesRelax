@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Constants;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -49,6 +50,8 @@ public class StartButtonFragment extends Fragment {
         final Activity activity = getActivity();
 
         final Button startButton = (Button) activity.findViewById(R.id.startButton);
+        float density = getResources().getDisplayMetrics().density;
+        startButton.setTextSize(Constants.TEXT_SIZE * density);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +63,7 @@ public class StartButtonFragment extends Fragment {
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.startTask));
                 intent.addCategory(TimeService.TAG);
                 activity.startService(intent);
+
 
                 startButtonCallBack.onStartButtonClick();
             }

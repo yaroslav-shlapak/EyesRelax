@@ -160,6 +160,7 @@ public class TimeService extends Service {
             Log.d("timeSequence", "stop");
         }
         timer = null;
+        mNotificationManager.cancel(Constants.NOTIFICATION_FINISHED_ID);
         setState("start");
     }
 
@@ -264,6 +265,10 @@ public class TimeService extends Service {
                 default:
                     break;
             }
+
+            //stopForeground(true);
+            notificationBuilder.setOngoing(false);
+            mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
             timeSequence("start", stage);
 
         }
@@ -377,7 +382,10 @@ public class TimeService extends Service {
             String telephonyExtra = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
             Log.d("ScreenBroadcastReceiver", strAction);
-            if(!SharedPrefUtility.isPCmodeEnabled(context) && uiForbid && stage.contentEquals("work")) {
+            Log.d("ScreenBroadcastReceiver", "" + SharedPrefUtility.isPCmodeEnabled(context));
+            Log.d("ScreenBroadcastReceiver", "" + uiForbid);
+            Log.d("ScreenBroadcastReceiver", "" + stage.contentEquals("work"));
+            if(!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")) {
 
                 if (strAction.equals(Intent.ACTION_SCREEN_OFF) || (telephonyExtra != null
                         && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)

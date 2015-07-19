@@ -8,13 +8,17 @@
         android:layout_height="match_parent"
         android:text="Pause"
         android:layout_weight="1"
-        android:id="@+id/pauseButton" />
+        android:id="@+id/pauseButton"
+        android:textColor="@color/white"
+        android:background="@drawable/button"  />/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Stop"
         android:layout_weight="1"
-        android:id="@+id/stopButton" />
+        android:id="@+id/stopButton"
+        android:textColor="@color/white"
+        android:background="@drawable/button" />
 
 </LinearLayout>

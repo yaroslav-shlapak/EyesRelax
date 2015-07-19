@@ -48,6 +48,8 @@ public class ProgressFragment extends Fragment {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.progress_layout, container, false);
         textView = (TextView) view.findViewById(R.id.textView);
+        float density = getResources().getDisplayMetrics().density;
+        textView.setTextSize(Constants.PROGRESS_SIZE * density);
         return view;
     }
 

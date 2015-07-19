@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Constants;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -51,8 +52,13 @@ public class PauseStopButtonsFragment extends Fragment {
 
         final MainActivity activity = (MainActivity) getActivity();
         Button stopButton = (Button) getActivity().findViewById(R.id.stopButton);
+        float density = getResources().getDisplayMetrics().density;
+        stopButton.setTextSize(Constants.TEXT_SIZE * density);
+
         pauseButton = (Button) getActivity().findViewById(R.id.pauseButton);
         pauseButton.setText(state);
+        pauseButton.setTextSize(Constants.TEXT_SIZE * density);
+
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
