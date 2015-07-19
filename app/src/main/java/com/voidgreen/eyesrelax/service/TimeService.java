@@ -254,8 +254,8 @@ public class TimeService extends Service {
             switch (stage) {
                 case "work":
                     setStage("relax");
+                    mNotificationManager.cancel(Constants.NOTIFICATION_FINISHED_ID);
                     SoundUtility.playWorkEnd(context);
-                    //setPopUpMessage();
                     break;
                 case "relax":
                     setStage("work");

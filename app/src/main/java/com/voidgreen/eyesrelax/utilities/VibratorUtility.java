@@ -10,8 +10,8 @@ public class VibratorUtility {
     public static void vibrateLong(Context context) {
         if(SharedPrefUtility.isVibrationEnabled(context)) {
             // Get instance of Vibrator from current Context
-            long vt = 500;
-            long dt = 1000;
+            long vt = 300;
+            long dt = 800;
             long delay = 0;
             // Each element then alternates between vibrate, sleep, vibrate, sleep...
             long[] pattern = {delay, vt, dt, vt, dt * 4 / 5, vt, dt * 2 / 3, vt, dt / 3, vt, dt / 3, vt, dt / 3};
@@ -24,8 +24,8 @@ public class VibratorUtility {
     public static void vibrateShort(Context context) {
         if(SharedPrefUtility.isVibrationEnabled(context)) {
             // Get instance of Vibrator from current Context
-            long vt = 200;
-            long dt = 200;
+            long vt = 300;
+            long dt = 300;
             long delay = 0;
             // Each element then alternates between vibrate, sleep, vibrate, sleep...
             long[] pattern = {delay, vt, dt, vt, dt};

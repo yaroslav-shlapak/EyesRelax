@@ -10,6 +10,7 @@
         android:textColor="@color/white"
         android:id="@+id/startButton"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/button" />
+        android:background="@drawable/button"
+        android:textSize="@dimen/buttons_text_size"/>
 
 </LinearLayout>

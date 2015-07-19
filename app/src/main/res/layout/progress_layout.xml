@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="00:00:00"
-        android:textSize="30dp"
+        android:textSize="@dimen/progress_size"
         android:id="@+id/textView"
         android:freezesText="true"
         android:textColor="@color/white"

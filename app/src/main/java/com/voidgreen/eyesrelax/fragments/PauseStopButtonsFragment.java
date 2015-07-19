@@ -52,12 +52,12 @@ public class PauseStopButtonsFragment extends Fragment {
 
         final MainActivity activity = (MainActivity) getActivity();
         Button stopButton = (Button) getActivity().findViewById(R.id.stopButton);
-        float density = getResources().getDisplayMetrics().density;
-        stopButton.setTextSize(Constants.TEXT_SIZE * density);
+/*        float density = getResources().getDisplayMetrics().density;
+        stopButton.setTextSize(Constants.TEXT_SIZE * density);*/
 
         pauseButton = (Button) getActivity().findViewById(R.id.pauseButton);
         pauseButton.setText(state);
-        pauseButton.setTextSize(Constants.TEXT_SIZE * density);
+/*        pauseButton.setTextSize(Constants.TEXT_SIZE * density);*/
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override

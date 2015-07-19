@@ -50,8 +50,8 @@ public class StartButtonFragment extends Fragment {
         final Activity activity = getActivity();
 
         final Button startButton = (Button) activity.findViewById(R.id.startButton);
-        float density = getResources().getDisplayMetrics().density;
-        startButton.setTextSize(Constants.TEXT_SIZE * density);
+/*        float density = getResources().getDisplayMetrics().density;
+        startButton.setTextSize(Constants.TEXT_SIZE * density);*/
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
