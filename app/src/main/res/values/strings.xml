@@ -24,6 +24,10 @@
     <string name="pref_key_30s_notification">30s notification</string>
     <string name="pref_title_30s_notification">30s before relax notification</string>
 
+    <string name="pref_key_pc_mode">enable PC mode</string>
+    <string name="pref_title_pc_mode">Enable PC mode</string>
+
+
     <string name="serviceTask">serviceTask</string>
     <string name="startTask">start</string>
     <string name="pauseTask">pause</string>

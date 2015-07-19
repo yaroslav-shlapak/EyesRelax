@@ -377,7 +377,7 @@ public class TimeService extends Service {
             String telephonyExtra = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
             Log.d("ScreenBroadcastReceiver", strAction);
-            if(!uiForbid && stage.contentEquals("work")) {
+            if(!SharedPrefUtility.isPCmodeEnabled(context) && uiForbid && stage.contentEquals("work")) {
 
                 if (strAction.equals(Intent.ACTION_SCREEN_OFF) || (telephonyExtra != null
                         && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)

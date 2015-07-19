@@ -51,4 +51,10 @@ public class SharedPrefUtility {
         return sharedPreferences.getBoolean(resources.getString(R.string.pref_key_30s_notification), false);
     }
 
+    public static boolean isPCmodeEnabled(Context context) {
+        Resources resources = context.getResources();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        return sharedPreferences.getBoolean(resources.getString(R.string.pref_key_pc_mode), false);
+    }
+
 }
