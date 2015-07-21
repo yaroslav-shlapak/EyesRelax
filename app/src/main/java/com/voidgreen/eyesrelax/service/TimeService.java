@@ -82,6 +82,7 @@ public class TimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Resources resources = getResources();
+        Log.d("onStartCommand", "onStartCommand");
 
         String task = "";
         if (intent !=null && intent.getExtras()!=null) {
@@ -100,14 +101,14 @@ public class TimeService extends Service {
                 //Utility.showToast(context, "onHandleIntent:start");
                 setState("stop");
                 uiForbid = false;
-                //Log.d("onStartCommand", "start");
+                Log.d("onStartCommand", "start");
                 if(timer == null) {
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
                     long  stageTime;
                     switch (stage) {
                         case "work":
-                            if(Utility.isScreenOn(context)) {
+                            if(Utility.isScreenOn(context) || SharedPrefUtility.isPCmodeEnabled(context)) {
                                 startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
                                         R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
                                 stageTime = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
