@@ -48,7 +48,8 @@ public class TimeService extends Service {
         //Log.d("TimeService", "setStage : " + stage );
     }
 
-    String stage = "work";
+    private String stage = "work";
+    private long  stageTime;
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -107,7 +108,6 @@ public class TimeService extends Service {
                 if(timer == null) {
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
-                    long  stageTime;
                     switch (stage) {
                         case "work":
                             if(Utility.isScreenOn(context) || SharedPrefUtility.isPCmodeEnabled(context)) {
@@ -217,11 +217,14 @@ public class TimeService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
-
+            millisUntilFinished = (long)(Math.floor(millisUntilFinished / 1000) * 1000);
+            if(millisUntilFinished > stageTime) {
+                millisUntilFinished--;
+            }
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
-            String notificationString = Utility.combinationFormatter((long) Math.floor(millisUntilFinished / 1000) * 1000);
-            Log.d("onTick", "" + (Math.floor(millisUntilFinished / 1000) * 1000));
+            String notificationString = Utility.combinationFormatter(millisUntilFinished);
+            Log.d("onTick", "" + millisUntilFinished);
             Log.d("onTick", notificationString);
             updateNotification(notificationString);
             sendTimeString(notificationString);
