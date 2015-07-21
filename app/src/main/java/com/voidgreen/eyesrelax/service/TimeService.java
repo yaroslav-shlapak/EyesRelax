@@ -218,12 +218,13 @@ public class TimeService extends Service {
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
             millisUntilFinished = (long)(Math.floor(millisUntilFinished / 1000) * 1000);
-            if(millisUntilFinished > stageTime) {
+            if(millisUntilFinished > (stageTime - 1)) {
                 millisUntilFinished--;
             }
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
             String notificationString = Utility.combinationFormatter(millisUntilFinished);
+            Log.d("onTick", "" + stageTime);
             Log.d("onTick", "" + millisUntilFinished);
             Log.d("onTick", notificationString);
             updateNotification(notificationString);
