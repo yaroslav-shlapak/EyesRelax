@@ -89,6 +89,8 @@ public class TimeService extends Service {
             task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
         uiForbid = true;
+        Log.d("task", task);
+        Log.d("stage", stage);
         timeSequence(task, stage);
         return super.onStartCommand(intent, flags, startId);
     }
@@ -149,7 +151,7 @@ public class TimeService extends Service {
 
             default:
                 //Utility.showToast(context, "onHandleIntent:default");
-                //Log.d("onStartCommand", "default");
+                Log.d("onStartCommand", "default");
                 break;
         }
     }
@@ -218,7 +220,8 @@ public class TimeService extends Service {
 
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
-            String notificationString = Utility.combinationFormatter(millisUntilFinished);
+            String notificationString = Utility.combinationFormatter((long) Math.floor(millisUntilFinished / 1000) * 1000);
+            Log.d("onTick", "" + (Math.floor(millisUntilFinished / 1000) * 1000));
             Log.d("onTick", notificationString);
             updateNotification(notificationString);
             sendTimeString(notificationString);
