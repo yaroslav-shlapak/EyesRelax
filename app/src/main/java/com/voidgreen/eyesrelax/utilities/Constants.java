@@ -24,6 +24,8 @@ public final class Constants {
 
     public static final String PROGRESS_KEY =
             "com.voidgreen.eyesrelax.PROGRESS_KEY";
+    public static final String STAGE_KEY =
+            "com.voidgreen.eyesrelax.STAGE_KEY";
 
     public static final long TICK_PERIOD = 1000;
     public static final int SEC_TO_MILLIS_MULT = 1000;

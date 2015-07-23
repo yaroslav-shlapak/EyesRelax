@@ -8,10 +8,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/timeLeft"
         android:textSize="@dimen/buttons_text_size"
         android:freezesText="true"
-        android:textColor="@color/white"
+        android:textColor="@color/grey"
         android:id="@+id/textViewTimeLeft"
         android:layout_above="@+id/textViewTime"
         android:layout_centerHorizontal="true" />
@@ -37,7 +36,7 @@
         android:textSize="@dimen/buttons_text_size"
         android:id="@+id/textViewStage"
         android:freezesText="true"
-        android:textColor="@color/white"
+        android:textColor="@color/grey"
 
         android:layout_below="@+id/textViewTime"
         android:layout_centerHorizontal="true" />

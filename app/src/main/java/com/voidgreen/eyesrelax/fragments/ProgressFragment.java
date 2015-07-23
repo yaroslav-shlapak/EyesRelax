@@ -80,6 +80,8 @@ public class ProgressFragment extends Fragment {
         // with actions named "custom-event-name".
         LocalBroadcastManager.getInstance(activity).registerReceiver((timeStringReceiver),
                 new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME));
+        LocalBroadcastManager.getInstance(activity).registerReceiver((stageStringReceiver),
+                new IntentFilter(Constants.BROADCAST_STAGE_NAME));
         Intent intent = activity.getIntent();
         updateProgressTextView(intent);
         updateStageTextView(intent);
@@ -90,19 +92,51 @@ public class ProgressFragment extends Fragment {
 
     private void updateProgressFromBundle(Bundle bundle) {
         if(bundle != null) {
-            String s = bundle.getString(Constants.PROGRESS_KEY);
-            if(s != null) {
-                progress = s;
+            String s1 = bundle.getString(Constants.PROGRESS_KEY);
+            if(s1 != null) {
+                progress = s1;
+            }
+            String s2 = bundle.getString(Constants.STAGE_KEY);
+            if(s2 != null) {
+                setStage(s2);
             }
 
         } else {
-            progress = Utility.getSavedTimeString(activity.getApplicationContext());
+            Context context = activity.getApplicationContext();
+            progress = Utility.getSavedTimeString(context);
+            stage = Utility.getStageString(context);
+        }
+        setTimeLeft(stage);
+    }
+
+    private void setStage(String stage) {
+        switch(stage) {
+            case "work":
+                this.stage = "WORK";
+                break;
+            case "relax":
+                this.stage = "RELAX";
+                break;
+            default:
+                this.stage = "";
+        }
+    }
+
+    private void setTimeLeft(String s) {
+        switch(s) {
+            case "WORK":
+            case "RELAX":
+                timeLeft = Constants.TIME_LEFT;
+                break;
+            default:
+                timeLeft = "";
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(Constants.PROGRESS_KEY, progress);
+        outState.putString(Constants.STAGE_KEY, stage);
         super.onSaveInstanceState(outState);
     }
 
@@ -117,25 +151,20 @@ public class ProgressFragment extends Fragment {
     private void updateStageTextView(Intent intent) {
         String s = intent.getStringExtra(Constants.BROADCAST_STAGE_DATA);
         if(s != null) {
-            stage = s;
-            switch(stage) {
-                case "work":
-                case "relax":
-                    timeLeft = Constants.TIME_LEFT;
-                    timeLeftTextView.setText(Constants.TIME_LEFT);
-                    break;
-                default:
-                    timeLeft = "";
-            }
+            setStage(s);
         }
         stageTextView.setText(stage);
+        setTimeLeft(stage);
+        timeLeftTextView.setText(timeLeft);
 
     }
     @Override
     public void onPause() {
 
         LocalBroadcastManager.getInstance(activity).unregisterReceiver(timeStringReceiver);
-        Utility.saveTimeString(activity.getApplicationContext(), progress);
+        Context context = activity.getApplicationContext();
+        Utility.saveTimeString(context, progress);
+        Utility.saveStageString(context, stage);
 
         putStringToBundle();
         super.onPause();

@@ -45,6 +45,7 @@ public class TimeService extends Service {
 
     public void setStage(String stage) {
         this.stage = stage;
+        sendStageString(stage);
         //Log.d("TimeService", "setStage : " + stage );
     }
 
@@ -98,6 +99,7 @@ public class TimeService extends Service {
 
     private void timeSequence(String task, String stage) {
         Context context = getApplicationContext();
+        sendStageString(stage);
 
         switch (task) {
             case "start":
@@ -147,6 +149,7 @@ public class TimeService extends Service {
             case "stop":
                 stopTimer();
                 stopSelf();
+
                 break;
 
             default:
@@ -165,6 +168,7 @@ public class TimeService extends Service {
         timer = null;
         mNotificationManager.cancel(Constants.NOTIFICATION_FINISHED_ID);
         setState("start");
+        sendStageString("");
     }
 
     private void pauseTimer() {
@@ -189,6 +193,7 @@ public class TimeService extends Service {
         stopTimer();
         Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
         sendTimeString(Constants.ZERO_PROGRESS);
+        sendStageString("");
         mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
         getApplicationContext().unregisterReceiver(screenOnOffReceiver);
     }
@@ -368,6 +373,15 @@ public class TimeService extends Service {
         }
         broadcaster.sendBroadcast(intent);
     }
+
+    public void sendStageString(String message) {
+        Intent intent = new Intent(Constants.BROADCAST_STAGE_NAME);
+        if(message != null) {
+            intent.putExtra(Constants.BROADCAST_STAGE_DATA, message);
+        }
+        broadcaster.sendBroadcast(intent);
+    }
+
 
 
     private void registerBroadcastReceiver() {

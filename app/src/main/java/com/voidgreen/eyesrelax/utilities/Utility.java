@@ -55,6 +55,22 @@ public class Utility {
         editor.apply();
     }
 
+    public static String getStageString(Context context) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        return batteryInfoSharedPref.getString
+                (context.getString(R.string.stageSting), Constants.ZERO_PROGRESS);
+    }
+
+    public static void saveStageString(Context context, String value) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = batteryInfoSharedPref.edit();
+        editor.putString(context.getString(R.string.stageSting), value);
+        editor.apply();
+    }
+
+
     /**
      * Is the screen of the device on.
      * @param context the context

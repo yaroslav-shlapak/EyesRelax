@@ -34,6 +34,7 @@
     <string name="stopTask">stop</string>
     <string name="resumeTask">resume</string>
     <string name="timeString">timeSting</string>
+    <string name="stageSting">stageSting</string>
     <string name="eyesRelaxSharedPref">eyesRelaxSharedPref</string>
 
     <string name="workStageTitle">Working with EyesRelax</string>
