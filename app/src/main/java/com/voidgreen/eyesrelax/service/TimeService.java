@@ -68,7 +68,7 @@ public class TimeService extends Service {
 
     public void setState(String state) {
         this.state = state;
-        //Log.d("TimeService", "setState : " + state);
+        Log.d("TimeService", "setState : " + state);
     }
 
     @Override
@@ -227,7 +227,7 @@ public class TimeService extends Service {
             Log.d("onTick", "" + stageTime);
             Log.d("onTick", "" + millisUntilFinished);
             Log.d("onTick", notificationString);
-            updateNotification(notificationString);
+            updateNotification(Constants.TIME_LEFT + notificationString);
             sendTimeString(notificationString);
             Context context = getApplicationContext();
             if(SharedPrefUtility.is30sEnabled(context) && millisUntilFinished < 30 * Constants.SEC_TO_MILLIS_MULT) {
@@ -412,6 +412,7 @@ public class TimeService extends Service {
                             @Override
                             public void onFinish() {
                                 stopTimer();
+                                setState("pause");
                                 Log.d("ScreenBroadcastReceiver", "onFinish");
                             }
                         };
@@ -425,6 +426,7 @@ public class TimeService extends Service {
                         Log.d("ScreenBroadcastReceiver", "resume");
                     } else {
                         timeSequence("start", "work");
+
                         Log.d("ScreenBroadcastReceiver", "start");
                     }
 

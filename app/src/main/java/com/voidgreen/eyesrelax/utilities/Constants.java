@@ -11,11 +11,11 @@ public final class Constants {
     public static final String BROADCAST_TIME_STRING_DATA =
             "com.voidgreen.eyesrelax.TIME_STRING_DATA";
 
-    public static final String BROADCAST_STATE_NAME =
-            "com.voidgreen.eyesrelax.STATE_NAME";
+    public static final String BROADCAST_STAGE_NAME =
+            "com.voidgreen.eyesrelax.STAGE_NAME";
 
-    public static final String BROADCAST_STATE_DATA =
-            "com.voidgreen.eyesrelax.STATE_DATA";
+    public static final String BROADCAST_STAGE_DATA =
+            "com.voidgreen.eyesrelax.STAGE_DATA";
 
     public static final int NOTIFICATION_COUNTDOWN_ID = 101;
     public static final int NOTIFICATION_FINISHED_ID = 102;
@@ -32,6 +32,9 @@ public final class Constants {
     public static final int TEXT_SIZE = 10;
     public static final int PROGRESS_SIZE = 20;
 
+    public static final String TIME_LEFT= "Time left: ";
+    public static final String WORK_STAGE= "WORK STAGE";
+    public static final String RELAX_STAGE= "RELAX STAGE";
 
 
 }

@@ -21,10 +21,15 @@ import com.voidgreen.eyesrelax.utilities.Utility;
  * Created by Void on 28-Jun-15.
  */
 public class ProgressFragment extends Fragment {
-    TextView textView;
-    BroadcastReceiver receiver;
+    TextView progressTextView;
+    TextView stageTextView;
+    TextView timeLeftTextView;
+    BroadcastReceiver timeStringReceiver;
+    BroadcastReceiver stageStringReceiver;
     Activity activity;
     String progress = Constants.ZERO_PROGRESS;
+    String stage = "";
+    String timeLeft = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,22 +39,29 @@ public class ProgressFragment extends Fragment {
 
 
 
-        receiver = new BroadcastReceiver() {
+        timeStringReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateProgressTextView(intent);
-                //Log.d("ProgressFragment", "receiver.onReceive");
+
             }
         };
+        stageStringReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateStageTextView(intent);
+            }
+        };
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.progress_layout, container, false);
-        textView = (TextView) view.findViewById(R.id.textView);
-//        float density = getResources().getDisplayMetrics().density;
-//        textView.setTextSize(Constants.PROGRESS_SIZE * density);
+        progressTextView = (TextView) view.findViewById(R.id.textViewTime);
+        stageTextView = (TextView) view.findViewById(R.id.textViewStage);
+        timeLeftTextView = (TextView) view.findViewById(R.id.textViewTimeLeft);
         return view;
     }
 
@@ -66,9 +78,11 @@ public class ProgressFragment extends Fragment {
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "custom-event-name".
-        LocalBroadcastManager.getInstance(activity).registerReceiver((receiver),
+        LocalBroadcastManager.getInstance(activity).registerReceiver((timeStringReceiver),
                 new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME));
-        updateProgressTextView(activity.getIntent());
+        Intent intent = activity.getIntent();
+        updateProgressTextView(intent);
+        updateStageTextView(intent);
 
 
         super.onResume();
@@ -97,12 +111,30 @@ public class ProgressFragment extends Fragment {
         if(s != null) {
             progress = s;
         }
-        textView.setText(progress);
+        progressTextView.setText(progress);
+    }
+
+    private void updateStageTextView(Intent intent) {
+        String s = intent.getStringExtra(Constants.BROADCAST_STAGE_DATA);
+        if(s != null) {
+            stage = s;
+            switch(stage) {
+                case "work":
+                case "relax":
+                    timeLeft = Constants.TIME_LEFT;
+                    timeLeftTextView.setText(Constants.TIME_LEFT);
+                    break;
+                default:
+                    timeLeft = "";
+            }
+        }
+        stageTextView.setText(stage);
+
     }
     @Override
     public void onPause() {
 
-        LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(timeStringReceiver);
         Utility.saveTimeString(activity.getApplicationContext(), progress);
 
         putStringToBundle();

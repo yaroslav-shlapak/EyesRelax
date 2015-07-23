@@ -8,14 +8,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/timeLeft"
+        android:textSize="@dimen/buttons_text_size"
+        android:freezesText="true"
+        android:textColor="@color/white"
+        android:id="@+id/textViewTimeLeft"
+        android:layout_above="@+id/textViewTime"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="00:00:00"
         android:textSize="@dimen/progress_size"
-        android:id="@+id/textView"
+        android:id="@+id/textViewTime"
         android:freezesText="true"
         android:textColor="@color/white"
 
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/buttons_text_size"
+        android:id="@+id/textViewStage"
+        android:freezesText="true"
+        android:textColor="@color/white"
+
+        android:layout_below="@+id/textViewTime"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
