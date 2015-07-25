@@ -38,7 +38,7 @@
     <string name="eyesRelaxSharedPref">eyesRelaxSharedPref</string>
 
     <string name="workStageTitle">Working with EyesRelax</string>
-    <string name="relaxStageTitle">Relaxing with EyesRelax</string>
+    <string name="relaxStageTitle">On a break…</string>
     <string name="relaxStageMessage">Take a break</string>
     <string name="workStageMessage">Start working with EyesRelax</string>
 

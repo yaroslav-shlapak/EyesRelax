@@ -59,7 +59,7 @@ public class Utility {
         SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
                 Context.MODE_PRIVATE);
         return batteryInfoSharedPref.getString
-                (context.getString(R.string.stageSting), Constants.ZERO_PROGRESS);
+                (context.getString(R.string.stageSting), "");
     }
 
     public static void saveStageString(Context context, String value) {

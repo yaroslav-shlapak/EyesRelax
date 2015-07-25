@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class ProgressFragment extends Fragment {
         activity = getActivity();
         updateProgressFromBundle(savedInstanceState);
 
-
+        Log.d(Constants.LOG_ID, "onCreate " + stage);
 
         timeStringReceiver = new BroadcastReceiver() {
             @Override
@@ -98,7 +99,9 @@ public class ProgressFragment extends Fragment {
             }
             String s2 = bundle.getString(Constants.STAGE_KEY);
             if(s2 != null) {
+
                 setStage(s2);
+                Log.d(Constants.LOG_ID, "updateProgressFromBundle " + stage);
             }
 
         } else {
@@ -109,23 +112,26 @@ public class ProgressFragment extends Fragment {
         setTimeLeft(stage);
     }
 
-    private void setStage(String stage) {
-        switch(stage) {
+    private void setStage(String s) {
+        Log.d(Constants.LOG_ID, "setStage " + s);
+        switch(s) {
+            case "WORK STAGE":
             case "work":
-                this.stage = "WORK";
+                stage = "WORK STAGE";
                 break;
+            case "RELAX STAGE":
             case "relax":
-                this.stage = "RELAX";
+                stage = "RELAX STAGE";
                 break;
             default:
-                this.stage = "";
+                stage = "";
         }
     }
 
     private void setTimeLeft(String s) {
         switch(s) {
-            case "WORK":
-            case "RELAX":
+            case "WORK STAGE":
+            case "RELAX STAGE":
                 timeLeft = Constants.TIME_LEFT;
                 break;
             default:
@@ -151,7 +157,9 @@ public class ProgressFragment extends Fragment {
     private void updateStageTextView(Intent intent) {
         String s = intent.getStringExtra(Constants.BROADCAST_STAGE_DATA);
         if(s != null) {
+
             setStage(s);
+            Log.d(Constants.LOG_ID, "updateStageTextView " + stage);
         }
         stageTextView.setText(stage);
         setTimeLeft(stage);
