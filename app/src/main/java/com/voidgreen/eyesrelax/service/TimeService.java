@@ -308,7 +308,7 @@ public class TimeService extends Service {
     private void startCountdownNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
         notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, true);
 
-        notificationBuilder.setContentText(Constants.ZERO_PROGRESS);
+        notificationBuilder.setContentText("");
 
         buildNotification(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder, true);
 
@@ -406,14 +406,15 @@ public class TimeService extends Service {
             Log.d("ScreenBroadcastReceiver", strAction);
             Log.d("ScreenBroadcastReceiver", "" + SharedPrefUtility.isPCmodeEnabled(context));
             Log.d("ScreenBroadcastReceiver", "" + uiForbid);
-            Log.d("ScreenBroadcastReceiver", "" + stage.contentEquals("work"));
+            Log.d("ScreenBroadcastReceiver", "" + (!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")));
             if(!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")) {
-
+                Log.d("ScreenBroadcastReceiver", "" + strAction.equals(Intent.ACTION_SCREEN_OFF));
                 if (strAction.equals(Intent.ACTION_SCREEN_OFF) || (telephonyExtra != null
                         && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)
                         || telephonyExtra.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)))) {
                     if(countDownTimer == null) {
                         pauseTimer();
+                        setState("pause");
                         Log.d("ScreenBroadcastReceiver", "pause");
                         countDownTimer = new CountDownTimer(
                                 SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT,
