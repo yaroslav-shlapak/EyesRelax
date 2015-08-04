@@ -35,10 +35,11 @@ public final class Constants {
     public static final int PROGRESS_SIZE = 20;
 
     public static final String TIME_LEFT= "Time left: ";
-    public static final String WORK_STAGE= "WORK STAGE";
-    public static final String RELAX_STAGE= "RELAX STAGE";
 
     public static final String LOG_ID = "eyesrelax.log";
 
+    public static final String DEFAULT_STAGE = "WORK STAGE";
+    public static final String WORK_STAGE = "WORK STAGE";
+    public static final String RELAX_STAGE = "RELAX STAGE";
 
 }

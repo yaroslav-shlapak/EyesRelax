@@ -7,7 +7,9 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Constants;
 import com.voidgreen.eyesrelax.utilities.SharedPrefUtility;
+import com.voidgreen.eyesrelax.utilities.Utility;
 
 /**
  * Created by Void on 17-Jul-15.
@@ -24,6 +26,9 @@ public class OnBootCompletedBroadcastREceiver extends BroadcastReceiver {
             serviceIntent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.startTask));
             serviceIntent.addCategory(TimeService.TAG);
             context.startService(serviceIntent);
+
+            Utility.saveTimeString(context, Constants.ZERO_PROGRESS);
+            Utility.saveStageString(context, "");
         }
 
     }
