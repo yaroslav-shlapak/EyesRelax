@@ -115,13 +115,13 @@ public class ProgressFragment extends Fragment {
     private void setStage(String s) {
         Log.d(Constants.LOG_ID, "setStage " + s);
         switch(s) {
-            case "WORK STAGE":
+            case Constants.WORK_STAGE:
             case "work":
-                stage = "WORK STAGE";
+                stage = Constants.WORK_STAGE;
                 break;
-            case "RELAX STAGE":
+            case Constants.RELAX_STAGE:
             case "relax":
-                stage = "RELAX STAGE";
+                stage = Constants.RELAX_STAGE;
                 break;
             default:
                 stage = "";
@@ -130,8 +130,8 @@ public class ProgressFragment extends Fragment {
 
     private void setTimeLeft(String s) {
         switch(s) {
-            case "WORK STAGE":
-            case "RELAX STAGE":
+            case Constants.RELAX_STAGE:
+            case Constants.WORK_STAGE:
                 timeLeft = Constants.TIME_LEFT;
                 break;
             default:
@@ -164,6 +164,7 @@ public class ProgressFragment extends Fragment {
         stageTextView.setText(stage);
         setTimeLeft(stage);
         timeLeftTextView.setText(timeLeft);
+        Utility.saveStageString(activity.getApplicationContext(), stage);
 
     }
     @Override
