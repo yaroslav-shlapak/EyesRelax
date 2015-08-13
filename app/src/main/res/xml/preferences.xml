@@ -2,20 +2,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="TIME SETTINGS">
         <com.voidgreen.eyesrelax.preferences.NumberPickerRelaxPreference
-            android:defaultValue="0"
+            android:defaultValue="5"
             android:key="@string/pref_key_relax_period"
             android:summary="Break time"
             android:title="@string/pref_title_relax_period" />
         <com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference
             alphaSlider="true"
-            android:defaultValue="0"
+            android:defaultValue="2"
             android:key="@string/pref_key_work_period"
             android:summary="Work time"
             android:title="@string/pref_title_work_period" />
         <CheckBoxPreference
             android:key="@string/pref_key_30s_notification"
             android:title="@string/pref_title_30s_notification"
-            android:defaultValue="false"/>
+            android:defaultValue="true"/>
         />
     </PreferenceCategory>
 
@@ -23,7 +23,7 @@
         <CheckBoxPreference
             android:key="@string/pref_key_vibration"
             android:title="@string/pref_title_vibration"
-            android:defaultValue="false"/>
+            android:defaultValue="true"/>
         />
         <CheckBoxPreference
             android:key="@string/pref_key_sound"
@@ -36,7 +36,7 @@
         <CheckBoxPreference
             android:key="@string/pref_key_start_on_boot"
             android:title="@string/pref_title_start_on_boot"
-            android:defaultValue="false"/>
+            android:defaultValue="true"/>
         />
         <CheckBoxPreference
             android:key="@string/pref_key_pc_mode"
