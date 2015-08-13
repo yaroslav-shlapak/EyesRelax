@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,11 +66,8 @@ public class ProgressFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {        super.onStart();
-
-
-        //AnimationProgressBarUtility.initAnimation(progressBar, activity.getApplicationContext());
-
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -79,9 +75,9 @@ public class ProgressFragment extends Fragment {
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "custom-event-name".
-        LocalBroadcastManager.getInstance(activity).registerReceiver((timeStringReceiver),
+        activity.registerReceiver((timeStringReceiver),
                 new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME));
-        LocalBroadcastManager.getInstance(activity).registerReceiver((stageStringReceiver),
+        activity.registerReceiver((stageStringReceiver),
                 new IntentFilter(Constants.BROADCAST_STAGE_NAME));
         Intent intent = activity.getIntent();
         updateProgressTextView(intent);
@@ -170,7 +166,7 @@ public class ProgressFragment extends Fragment {
     @Override
     public void onPause() {
 
-        LocalBroadcastManager.getInstance(activity).unregisterReceiver(timeStringReceiver);
+        activity.unregisterReceiver(timeStringReceiver);
         Context context = activity.getApplicationContext();
         Utility.saveTimeString(context, progress);
         Utility.saveStageString(context, stage);

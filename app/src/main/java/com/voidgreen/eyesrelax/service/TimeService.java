@@ -13,9 +13,7 @@ import android.content.res.Resources;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
+import android.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -33,10 +31,9 @@ import com.voidgreen.eyesrelax.utilities.VibratorUtility;
  */
 public class TimeService extends Service {
     private EyesRelaxCountDownTimer timer;
-    private NotificationCompat.Builder notificationBuilder;
+    private Notification.Builder notificationBuilder;
     private Notification notification;
     final public static String TAG = "TimeService";
-    private LocalBroadcastManager broadcaster;
     private final IBinder mBinder = new TimeBinder();
     private String state = "start";
     private NotificationManager mNotificationManager;
@@ -75,7 +72,6 @@ public class TimeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        broadcaster = LocalBroadcastManager.getInstance(this);
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         registerBroadcastReceiver();
 
@@ -315,12 +311,12 @@ public class TimeService extends Service {
     }
 
     private void startTimerFinishedNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
-        NotificationCompat.Builder notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, false);
+        Notification.Builder notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, false);
         buildNotification(Constants.NOTIFICATION_FINISHED_ID, notificationBuilder, false);
 
     }
 
-    private void buildNotification(int notificationId, NotificationCompat.Builder notificationBuilder, boolean startForegroundEnable) {
+    private void buildNotification(int notificationId, Notification.Builder notificationBuilder, boolean startForegroundEnable) {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
@@ -331,10 +327,10 @@ public class TimeService extends Service {
         }
     }
 
-    private NotificationCompat.Builder setNotification(int titleText, int tickerText, int smallIcon, int largeIcon, boolean onGoingEnable) {
+    private Notification.Builder setNotification(int titleText, int tickerText, int smallIcon, int largeIcon, boolean onGoingEnable) {
         Resources resources = getResources();
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this)
+        Notification.Builder notificationBuilder =
+                new Notification.Builder(this)
                         .setSmallIcon(smallIcon)
                         .setTicker(resources.getString(tickerText))
                         .setContentTitle(resources.getString(titleText))
@@ -371,7 +367,7 @@ public class TimeService extends Service {
         if(message != null) {
             intent.putExtra(Constants.BROADCAST_TIME_STRING_DATA, message);
         }
-        broadcaster.sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     public void sendStageString(String message) {
@@ -379,7 +375,7 @@ public class TimeService extends Service {
         if(message != null) {
             intent.putExtra(Constants.BROADCAST_STAGE_DATA, message);
         }
-        broadcaster.sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
 

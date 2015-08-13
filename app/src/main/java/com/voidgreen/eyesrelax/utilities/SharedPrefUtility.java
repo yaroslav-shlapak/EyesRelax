@@ -13,18 +13,19 @@ import com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference;
  * Created by Void on 28-Jun-15.
  */
 public class SharedPrefUtility {
-    private final static int DEFAULT = 0;
+    private final static int DEFAULT_WORK_INDEX = 2;
+    private final static int DEFAULT_RELAX_INDEX = 5;
 
     public static int getRelaxTime(Context context) {
         Resources resources = context.getResources();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return NumberPickerRelaxPreference.getNumValue(sharedPreferences.getInt(resources.getString(R.string.pref_key_relax_period), DEFAULT));
+        return NumberPickerRelaxPreference.getNumValue(sharedPreferences.getInt(resources.getString(R.string.pref_key_relax_period), DEFAULT_RELAX_INDEX));
     }
 
     public static int getWorkTime(Context context) {
         Resources resources = context.getResources();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        return NumberPickerWorkPreference.getNumValue(sharedPreferences.getInt(resources.getString(R.string.pref_key_work_period), DEFAULT));
+        return NumberPickerWorkPreference.getNumValue(sharedPreferences.getInt(resources.getString(R.string.pref_key_work_period), DEFAULT_WORK_INDEX));
     }
 
     public static boolean isSoundEnabled(Context context) {

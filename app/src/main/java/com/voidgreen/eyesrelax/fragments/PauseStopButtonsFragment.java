@@ -2,10 +2,10 @@ package com.voidgreen.eyesrelax.fragments;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +15,6 @@ import android.widget.Button;
 import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.service.TimeService;
-import com.voidgreen.eyesrelax.utilities.Constants;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -62,7 +61,6 @@ public class PauseStopButtonsFragment extends Fragment {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //AnimationProgressBarUtility.stop();
                 Resources resources = getResources();
                 Intent intent = new Intent(activity, TimeService.class);
                 intent.putExtra(resources.getString(R.string.serviceTask),
@@ -79,7 +77,6 @@ public class PauseStopButtonsFragment extends Fragment {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //AnimationProgressBarUtility.pause();
                 String pauseBattonText = pauseButton.getText().toString();
                 updatePauseResumeButton(pauseBattonText);
 

@@ -7,10 +7,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.voidgreen.eyesrelax.preferences.NumberPickerRelaxPreference;
 import com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference;
