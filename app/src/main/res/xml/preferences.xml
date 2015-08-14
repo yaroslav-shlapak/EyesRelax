@@ -36,7 +36,7 @@
         <CheckBoxPreference
             android:key="@string/pref_key_start_on_boot"
             android:title="@string/pref_title_start_on_boot"
-            android:defaultValue="true"/>
+            android:defaultValue="false"/>
         />
         <CheckBoxPreference
             android:key="@string/pref_key_pc_mode"
