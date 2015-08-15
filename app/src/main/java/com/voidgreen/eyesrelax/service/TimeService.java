@@ -400,8 +400,11 @@ public class TimeService extends Service {
             String telephonyExtra = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
             Log.d("ScreenBroadcastReceiver", strAction);
+            if(telephonyExtra != null) {
+                Log.d("ScreenBroadcastReceiver", telephonyExtra);
+            }
             Log.d("ScreenBroadcastReceiver", "" + SharedPrefUtility.isPCmodeEnabled(context));
-            Log.d("ScreenBroadcastReceiver", "" + uiForbid);
+            Log.d("ScreenBroadcastReceiver", "" + !uiForbid);
             Log.d("ScreenBroadcastReceiver", "" + (!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")));
             if(!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")) {
                 Log.d("ScreenBroadcastReceiver", "" + strAction.equals(Intent.ACTION_SCREEN_OFF));
