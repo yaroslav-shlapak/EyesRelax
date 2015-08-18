@@ -6,12 +6,25 @@
     <Button
         android:layout_width="@dimen/buttons_size"
         android:layout_height="@dimen/buttons_size"
-        android:text="Start"
-        android:textColor="@color/black"
-        android:id="@+id/startButton"
-        android:background="@drawable/button"
+        android:text="Pause"
         android:textSize="@dimen/buttons_text_size"
-        android:layout_centerVertical="true"
+        android:id="@+id/pauseButton"
+        android:textColor="@color/black"
+        android:background="@drawable/button"
+
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />/>
+
+    <Button
+        android:layout_width="@dimen/buttons_size"
+        android:layout_height="@dimen/buttons_size"
+        android:text="Stop"
+        android:textSize="@dimen/buttons_text_size"
+        android:id="@+id/stopButton"
+        android:textColor="@color/black"
+        android:background="@drawable/button"
+
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

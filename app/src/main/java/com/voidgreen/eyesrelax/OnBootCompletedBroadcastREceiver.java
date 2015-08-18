@@ -19,11 +19,12 @@ public class OnBootCompletedBroadcastREceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("OnBootCompletedBroadcastReceiver", "onReceive before if");
 
+        Utility.saveTimeString(context, Constants.ZERO_PROGRESS);
+        Utility.saveStageString(context, Constants.WORK_STAGE);
+
         if(SharedPrefUtility.isStartOnBootEnabled(context)) {
             Log.d("OnBootCompletedBroadcastReceiver", "onReceive in if");
 
-            Utility.saveTimeString(context, Constants.ZERO_PROGRESS);
-            Utility.saveStageString(context, Constants.WORK_STAGE);
             Resources resources = context.getResources();
             Intent serviceIntent = new Intent(context, TimeService.class);
             serviceIntent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.startTask));
