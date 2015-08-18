@@ -167,6 +167,7 @@ public class ProgressFragment extends Fragment {
     public void onPause() {
 
         activity.unregisterReceiver(timeStringReceiver);
+        activity.unregisterReceiver(stageStringReceiver);
         Context context = activity.getApplicationContext();
         Utility.saveTimeString(context, progress);
         Utility.saveStageString(context, stage);

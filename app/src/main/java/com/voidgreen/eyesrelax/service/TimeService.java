@@ -39,6 +39,7 @@ public class TimeService extends Service {
     private NotificationManager mNotificationManager;
     BroadcastReceiver screenOnOffReceiver;
     private boolean uiForbid;
+    private boolean screenReceiverForbid = false;
 
     public void setStage(String stage) {
         this.stage = stage;
@@ -86,6 +87,7 @@ public class TimeService extends Service {
         if (intent !=null && intent.getExtras()!=null) {
             task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
+        screenReceiverForbid = false;
         uiForbid = true;
         Log.d("task", task);
         Log.d("stage", stage);
@@ -400,14 +402,22 @@ public class TimeService extends Service {
             String telephonyExtra = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
             Log.d("ScreenBroadcastReceiver", strAction);
+            if(telephonyExtra != null) {
+                Log.d("ScreenBroadcastReceiver", telephonyExtra);
+            }
             Log.d("ScreenBroadcastReceiver", "" + SharedPrefUtility.isPCmodeEnabled(context));
-            Log.d("ScreenBroadcastReceiver", "" + uiForbid);
+            Log.d("ScreenBroadcastReceiver", "" + !uiForbid);
             Log.d("ScreenBroadcastReceiver", "" + (!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")));
             if(!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")) {
                 Log.d("ScreenBroadcastReceiver", "" + strAction.equals(Intent.ACTION_SCREEN_OFF));
-                if (strAction.equals(Intent.ACTION_SCREEN_OFF) || (telephonyExtra != null
+                if ((!screenReceiverForbid && strAction.equals(Intent.ACTION_SCREEN_OFF)) || (telephonyExtra != null
                         && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)
                         || telephonyExtra.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)))) {
+                    if((telephonyExtra != null
+                            && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)
+                            || telephonyExtra.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)))) {
+                        screenReceiverForbid = true;
+                    }
                     if(countDownTimer == null) {
                         pauseTimer();
                         setState("pause");
@@ -430,8 +440,9 @@ public class TimeService extends Service {
                         countDownTimer.start();
                     }
                     //System.out.println("Screen off " + "LOCKED");
-                } else if(strAction.equals(Intent.ACTION_SCREEN_ON) || (telephonyExtra != null
+                } else if((!screenReceiverForbid && strAction.equals(Intent.ACTION_SCREEN_ON)) || (telephonyExtra != null
                         && telephonyExtra.equals(TelephonyManager.EXTRA_STATE_IDLE))) {
+                    screenReceiverForbid = false;
                     if (timer != null) {
                         resumeTimer();
                         Log.d("ScreenBroadcastReceiver", "resume");
