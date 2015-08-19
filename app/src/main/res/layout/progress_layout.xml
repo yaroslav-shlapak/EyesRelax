@@ -6,27 +6,26 @@
 <!--    android:background="@drawable/progress_style">-->
 
     <com.voidgreen.eyesrelax.animation.CircleProgressView
-        android:layout_width="277dp"
+        android:layout_width="450dp"
         android:layout_height="wrap_content"
         android:id="@+id/circleView"
         CircleProgressView:contourSize="0dp"
-        CircleProgressView:rimWidth="35dp"
+        CircleProgressView:rimWidth="10dp"
         CircleProgressView:rimColor="#B2DFDB"
-        CircleProgressView:barWidth="35dp"
+        CircleProgressView:barWidth="20dp"
         CircleProgressView:barColor="#00796B"
-        CircleProgressView:showUnit="true"
-        CircleProgressView:unit="%"
+        CircleProgressView:showUnit="false"
+        CircleProgressView:text="00:00:00"
+        CircleProgressView:textSize="@dimen/progress_text_size"
         CircleProgressView:unitColor="#009688"
-        CircleProgressView:textColor="#00796B"
         android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/textViewTime"
-        android:layout_alignEnd="@+id/textViewTime" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/buttons_text_size"
+        android:textSize="@dimen/progress_other_text_size"
         android:freezesText="true"
         android:textColor="@color/grey"
         android:id="@+id/textViewTimeLeft"
@@ -38,10 +37,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="00:00:00"
-        android:textSize="@dimen/progress_size"
+        android:textSize="@dimen/progress_text_size"
         android:id="@+id/textViewTime"
         android:freezesText="true"
         android:textColor="@color/white"
+        android:visibility="invisible"
 
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/buttons_text_size"
+        android:textSize="@dimen/progress_other_text_size"
         android:id="@+id/textViewStage"
         android:freezesText="true"
         android:textColor="@color/grey"

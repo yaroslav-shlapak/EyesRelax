@@ -163,7 +163,7 @@ public class CircleProgressView extends View {
 
 
     private boolean mShowUnit = false;
-
+    private boolean mShowText = false;
 
     //clipping
     private Bitmap mClippingBitmap;
