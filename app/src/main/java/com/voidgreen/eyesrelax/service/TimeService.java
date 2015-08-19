@@ -40,6 +40,7 @@ public class TimeService extends Service {
     BroadcastReceiver screenOnOffReceiver;
     private boolean uiForbid;
     private boolean screenReceiverForbid = false;
+    public static boolean serviceRunning = false;
 
     public void setStage(String stage) {
         this.stage = stage;
@@ -75,6 +76,7 @@ public class TimeService extends Service {
         super.onCreate();
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         registerBroadcastReceiver();
+        serviceRunning = true;
 
     }
 
@@ -194,6 +196,7 @@ public class TimeService extends Service {
         sendStageString("");
         mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
         getApplicationContext().unregisterReceiver(screenOnOffReceiver);
+        serviceRunning = false;
     }
 
     @Override

@@ -10,9 +10,10 @@
         android:textSize="@dimen/buttons_text_size"
         android:id="@+id/pauseButton"
         android:textColor="@color/black"
-        android:background="@drawable/button"
+        android:background="@drawable/button_blue"
 
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/buttons_margin"
         android:layout_centerHorizontal="true" />/>
 
     <Button
@@ -22,9 +23,10 @@
         android:textSize="@dimen/buttons_text_size"
         android:id="@+id/stopButton"
         android:textColor="@color/black"
-        android:background="@drawable/button"
+        android:background="@drawable/button_red"
 
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/buttons_margin" />
 
 </RelativeLayout>

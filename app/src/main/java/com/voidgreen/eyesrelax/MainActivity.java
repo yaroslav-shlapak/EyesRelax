@@ -1,6 +1,7 @@
 package com.voidgreen.eyesrelax;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ComponentName;
@@ -10,8 +11,6 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -113,7 +112,9 @@ public class MainActivity extends Activity
             }
         } else {
             Log.d("ActivityOnCreate", "else");
-            setStartButtonFragment();
+            if(!isTimeServiceRunning()) {
+                setStartButtonFragment();
+            }
         }
     }
 
@@ -208,4 +209,18 @@ public class MainActivity extends Activity
             mBound = false;
         }
     };
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isTimeServiceRunning() {
+        return TimeService.serviceRunning;
+    }
 }
