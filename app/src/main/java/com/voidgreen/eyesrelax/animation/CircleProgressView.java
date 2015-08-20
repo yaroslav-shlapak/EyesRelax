@@ -1059,7 +1059,7 @@ public class CircleProgressView extends View {
         //Draw Text
         if (mTextColor == -1) //undefined
         {
-            mTextPaint.setColor(getTextColor(mCurrentValue));
+            //mTextPaint.setColor(getTextColor(mCurrentValue));
         }
 
         //set text

@@ -11,7 +11,7 @@
         android:id="@+id/circleView"
         CircleProgressView:contourSize="0dp"
         CircleProgressView:rimWidth="10dp"
-        CircleProgressView:rimColor="@color/green"
+        CircleProgressView:rimColor="@color/blue"
         CircleProgressView:barWidth="20dp"
         CircleProgressView:barColor="@color/green"
         CircleProgressView:showUnit="false"
@@ -21,42 +21,13 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/progress_other_text_size"
-        android:freezesText="true"
-        android:textColor="@color/grey"
-        android:id="@+id/textViewTimeLeft"
-        android:layout_above="@+id/textViewTime"
+        android:id="@+id/imageView"
+        android:layout_marginBottom="41dp"
+        android:layout_alignBottom="@+id/circleView"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="00:00:00"
-        android:textSize="@dimen/progress_text_size"
-        android:id="@+id/textViewTime"
-        android:freezesText="true"
-        android:textColor="@color/white"
-        android:visibility="invisible"
-
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/progress_other_text_size"
-        android:id="@+id/textViewStage"
-        android:freezesText="true"
-        android:textColor="@color/grey"
-
-        android:layout_below="@+id/textViewTime"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -70,6 +70,21 @@ public class Utility {
         editor.apply();
     }
 
+    public static int getTimeValue(Context context) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        return batteryInfoSharedPref.getInt
+                (Constants.TIME_VALUE_SHARED_PREFERENCE, 0);
+    }
+
+    public static void saveTimeValue(Context context, int value) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = batteryInfoSharedPref.edit();
+        editor.putInt(Constants.TIME_VALUE_SHARED_PREFERENCE, value);
+        editor.apply();
+    }
+
 
     /**
      * Is the screen of the device on.

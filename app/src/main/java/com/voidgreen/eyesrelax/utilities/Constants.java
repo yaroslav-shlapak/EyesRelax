@@ -23,6 +23,9 @@ public final class Constants {
     public static final String BROADCAST_TIME_INT_DATA =
             "com.voidgreen.eyesrelax.TIME_INT_DATA";
 
+    public static final String TIME_VALUE_SHARED_PREFERENCE =
+            "com.voidgreen.eyesrelax.TIME_VALUE_SHARED_PREFERENCE";
+
     public static final int NOTIFICATION_COUNTDOWN_ID = 101;
     public static final int NOTIFICATION_FINISHED_ID = 102;
 
@@ -37,7 +40,7 @@ public final class Constants {
 
     public static final long TICK_PERIOD = 1000;
     public static final int SEC_TO_MILLIS_MULT = 1000;
-    public static final int MIN_TO_MILLIS_MULT = 60 * 1000;
+    public static final int MIN_TO_MILLIS_MULT = 1000; // 60 * 1000; //
 
     public static final int TEXT_SIZE = 10;
     public static final int PROGRESS_SIZE = 20;
