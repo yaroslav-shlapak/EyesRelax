@@ -17,6 +17,12 @@ public final class Constants {
     public static final String BROADCAST_STAGE_DATA =
             "com.voidgreen.eyesrelax.STAGE_DATA";
 
+    public static final String BROADCAST_TIME_INT_NAME =
+            "com.voidgreen.eyesrelax.TIME_INT_NAME";
+
+    public static final String BROADCAST_TIME_INT_DATA =
+            "com.voidgreen.eyesrelax.TIME_INT_DATA";
+
     public static final int NOTIFICATION_COUNTDOWN_ID = 101;
     public static final int NOTIFICATION_FINISHED_ID = 102;
 
@@ -26,6 +32,8 @@ public final class Constants {
             "com.voidgreen.eyesrelax.PROGRESS_KEY";
     public static final String STAGE_KEY =
             "com.voidgreen.eyesrelax.STAGE_KEY";
+    public static final String VALUE_KEY =
+            "com.voidgreen.eyesrelax.VALUE_KEY";
 
     public static final long TICK_PERIOD = 1000;
     public static final int SEC_TO_MILLIS_MULT = 1000;

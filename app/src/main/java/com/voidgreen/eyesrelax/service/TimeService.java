@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.content.res.Resources;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -30,36 +30,24 @@ import com.voidgreen.eyesrelax.utilities.VibratorUtility;
  * Created by Void on 29-Jun-15.
  */
 public class TimeService extends Service {
+    final public static String TAG = "TimeService";
+    public static boolean serviceRunning = false;
+    private final IBinder mBinder = new TimeBinder();
+    BroadcastReceiver screenOnOffReceiver;
     private EyesRelaxCountDownTimer timer;
     private Notification.Builder notificationBuilder;
     private Notification notification;
-    final public static String TAG = "TimeService";
-    private final IBinder mBinder = new TimeBinder();
     private String state = "start";
     private NotificationManager mNotificationManager;
-    BroadcastReceiver screenOnOffReceiver;
     private boolean uiForbid;
     private boolean screenReceiverForbid = false;
-    public static boolean serviceRunning = false;
+    private String stage = "work";
+    private long stageTime;
 
     public void setStage(String stage) {
         this.stage = stage;
         sendStageString(stage);
         //Log.d("TimeService", "setStage : " + stage );
-    }
-
-    private String stage = "work";
-    private long  stageTime;
-
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    public class TimeBinder extends Binder {
-        public TimeService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return TimeService.this;
-        }
     }
 
     public String getState() {
@@ -86,7 +74,7 @@ public class TimeService extends Service {
         Log.d("onStartCommand", "onStartCommand");
 
         String task = "";
-        if (intent !=null && intent.getExtras()!=null) {
+        if (intent != null && intent.getExtras() != null) {
             task = intent.getStringExtra(resources.getString(R.string.serviceTask));
         }
         screenReceiverForbid = false;
@@ -107,12 +95,12 @@ public class TimeService extends Service {
                 setState("stop");
                 uiForbid = false;
                 Log.d("onStartCommand", "start");
-                if(timer == null) {
+                if (timer == null) {
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
                     switch (stage) {
                         case "work":
-                            if(Utility.isScreenOn(context) || SharedPrefUtility.isPCmodeEnabled(context)) {
+                            if (Utility.isScreenOn(context) || SharedPrefUtility.isPCmodeEnabled(context)) {
                                 startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
                                         R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
                                 stageTime = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
@@ -161,7 +149,7 @@ public class TimeService extends Service {
 
     private void stopTimer() {
         setStage("work");
-        if(timer != null) {
+        if (timer != null) {
             timer.cancel();
             Log.d("timeSequence", "stop");
         }
@@ -173,7 +161,7 @@ public class TimeService extends Service {
 
     private void pauseTimer() {
         setState("resume");
-        if(timer != null) {
+        if (timer != null) {
             Log.d("timeSequence", "pause");
             timer.pause();
         }
@@ -181,7 +169,7 @@ public class TimeService extends Service {
 
     private void resumeTimer() {
         setState("pause");
-        if(timer != null) {
+        if (timer != null) {
             Log.d("timeSequence", "resume");
             timer.resume();
         }
@@ -193,6 +181,7 @@ public class TimeService extends Service {
         stopTimer();
         Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
         sendTimeString(Constants.ZERO_PROGRESS);
+        sendTimeInt(0);
         sendStageString("");
         mNotificationManager.cancel(Constants.NOTIFICATION_COUNTDOWN_ID);
         getApplicationContext().unregisterReceiver(screenOnOffReceiver);
@@ -211,6 +200,130 @@ public class TimeService extends Service {
         return super.onUnbind(intent);
     }
 
+    private void updateNotification(String notificationString) {
+        if (notificationBuilder != null) {
+            notificationBuilder.setContentText(notificationString);
+            //startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
+            mNotificationManager.notify(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
+        }
+    }
+
+    private void finishAll() {
+        sendTimeString(Constants.ZERO_PROGRESS);
+        sendTimeInt(0);
+        updateNotification(Constants.ZERO_PROGRESS);
+
+        Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
+        setState("start");
+        timer = null;
+
+    }
+
+    private void startCountdownNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
+        notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, true);
+
+        notificationBuilder.setContentText("");
+
+        buildNotification(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder, true);
+
+    }
+
+    private void startTimerFinishedNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
+        Notification.Builder notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, false);
+        buildNotification(Constants.NOTIFICATION_FINISHED_ID, notificationBuilder, false);
+
+    }
+
+    private void buildNotification(int notificationId, Notification.Builder notificationBuilder, boolean startForegroundEnable) {
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        Notification notification = notificationBuilder.build();
+        mNotificationManager.notify(notificationId, notification);
+        if (startForegroundEnable) {
+            startForeground(notificationId, notification);
+        }
+    }
+
+    private Notification.Builder setNotification(int titleText, int tickerText, int smallIcon, int largeIcon, boolean onGoingEnable) {
+        Resources resources = getResources();
+        Notification.Builder notificationBuilder =
+                new Notification.Builder(this)
+                        .setSmallIcon(smallIcon)
+                        .setTicker(resources.getString(tickerText))
+                        .setContentTitle(resources.getString(titleText))
+                        .setOngoing(onGoingEnable);
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+/*        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), largeIcon),
+                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
+                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
+                true);
+        notificationBuilder.setLargeIcon(bm);*/
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        notificationBuilder.setContentIntent(resultPendingIntent);
+        return notificationBuilder;
+    }
+
+    public void sendTimeString(String message) {
+        Intent intent = new Intent(Constants.BROADCAST_TIME_STRING_NAME);
+        if (message != null) {
+            intent.putExtra(Constants.BROADCAST_TIME_STRING_DATA, message);
+        }
+        sendBroadcast(intent);
+    }
+
+    public void sendTimeInt(int message) {
+        Intent intent = new Intent(Constants.BROADCAST_TIME_INT_NAME);
+        intent.putExtra(Constants.BROADCAST_TIME_INT_DATA, message);
+        sendBroadcast(intent);
+    }
+
+    public void sendStageString(String message) {
+        Intent intent = new Intent(Constants.BROADCAST_STAGE_NAME);
+        if (message != null) {
+            intent.putExtra(Constants.BROADCAST_STAGE_DATA, message);
+        }
+        sendBroadcast(intent);
+    }
+
+    private void registerBroadcastReceiver() {
+        final IntentFilter theFilter = new IntentFilter();
+        /** System Defined Broadcast */
+        theFilter.addAction(Intent.ACTION_SCREEN_ON);
+        theFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        theFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+
+        screenOnOffReceiver = new ScreenBroadcastReceiver();
+        getApplicationContext().registerReceiver(screenOnOffReceiver, theFilter);
+        Log.d("TimeService", "registerBroadcastReceiver");
+    }
+
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class TimeBinder extends Binder {
+        public TimeService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return TimeService.this;
+        }
+    }
 
     private class EyesRelaxCountDownTimer extends CountDownTimerWithPause {
         private boolean preRelaxNotification = true;
@@ -223,8 +336,8 @@ public class TimeService extends Service {
         @Override
         public void onTick(long millisUntilFinished) {
             // Puts the status into the Intent
-            millisUntilFinished = (long)(Math.floor(millisUntilFinished / 1000) * 1000);
-            if(millisUntilFinished > (stageTime - 1)) {
+            millisUntilFinished = (long) (Math.floor(millisUntilFinished / 1000) * 1000);
+            if (millisUntilFinished > (stageTime - 1)) {
                 millisUntilFinished--;
             }
             // Broadcasts the Intent to receivers in this app.
@@ -234,10 +347,11 @@ public class TimeService extends Service {
             Log.d("onTick", "" + millisUntilFinished);
             Log.d("onTick", notificationString);
             updateNotification(Constants.TIME_LEFT + notificationString);
+            sendTimeInt((int) millisUntilFinished);
             sendTimeString(notificationString);
             Context context = getApplicationContext();
-            if(SharedPrefUtility.is30sEnabled(context) && millisUntilFinished < 30 * Constants.SEC_TO_MILLIS_MULT) {
-                if(preRelaxNotification) {
+            if (SharedPrefUtility.is30sEnabled(context) && millisUntilFinished < 30 * Constants.SEC_TO_MILLIS_MULT) {
+                if (preRelaxNotification) {
                     preRelaxNotification = false;
                     switch (stage) {
                         case "work":
@@ -288,140 +402,32 @@ public class TimeService extends Service {
         }
     }
 
-    private void updateNotification(String notificationString) {
-        if (notificationBuilder != null) {
-            notificationBuilder.setContentText(notificationString);
-            //startForeground(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
-            mNotificationManager.notify(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder.build());
-        }
-    }
-
-    private void finishAll() {
-        sendTimeString(Constants.ZERO_PROGRESS);
-        updateNotification(Constants.ZERO_PROGRESS);
-
-        Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
-        setState("start");
-        timer = null;
-
-    }
-
-    private void startCountdownNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
-        notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, true);
-
-        notificationBuilder.setContentText("");
-
-        buildNotification(Constants.NOTIFICATION_COUNTDOWN_ID, notificationBuilder, true);
-
-    }
-
-    private void startTimerFinishedNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
-        Notification.Builder notificationBuilder = setNotification(titleText, tickerText, smallIcon, largeIcon, false);
-        buildNotification(Constants.NOTIFICATION_FINISHED_ID, notificationBuilder, false);
-
-    }
-
-    private void buildNotification(int notificationId, Notification.Builder notificationBuilder, boolean startForegroundEnable) {
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        Notification notification = notificationBuilder.build();
-        mNotificationManager.notify(notificationId, notification);
-        if(startForegroundEnable) {
-            startForeground(notificationId, notification);
-        }
-    }
-
-    private Notification.Builder setNotification(int titleText, int tickerText, int smallIcon, int largeIcon, boolean onGoingEnable) {
-        Resources resources = getResources();
-        Notification.Builder notificationBuilder =
-                new Notification.Builder(this)
-                        .setSmallIcon(smallIcon)
-                        .setTicker(resources.getString(tickerText))
-                        .setContentTitle(resources.getString(titleText))
-                        .setOngoing(onGoingEnable);
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
-
-/*        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), largeIcon),
-                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
-                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
-                true);
-        notificationBuilder.setLargeIcon(bm);*/
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        notificationBuilder.setContentIntent(resultPendingIntent);
-        return notificationBuilder;
-    }
-
-    public void sendTimeString(String message) {
-        Intent intent = new Intent(Constants.BROADCAST_TIME_STRING_NAME);
-        if(message != null) {
-            intent.putExtra(Constants.BROADCAST_TIME_STRING_DATA, message);
-        }
-        sendBroadcast(intent);
-    }
-
-    public void sendStageString(String message) {
-        Intent intent = new Intent(Constants.BROADCAST_STAGE_NAME);
-        if(message != null) {
-            intent.putExtra(Constants.BROADCAST_STAGE_DATA, message);
-        }
-        sendBroadcast(intent);
-    }
-
-
-
-    private void registerBroadcastReceiver() {
-        final IntentFilter theFilter = new IntentFilter();
-        /** System Defined Broadcast */
-        theFilter.addAction(Intent.ACTION_SCREEN_ON);
-        theFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        theFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-
-        screenOnOffReceiver = new ScreenBroadcastReceiver();
-        getApplicationContext().registerReceiver(screenOnOffReceiver, theFilter);
-        Log.d("TimeService", "registerBroadcastReceiver");
-    }
-
     public class ScreenBroadcastReceiver extends BroadcastReceiver {
         CountDownTimer countDownTimer = null;
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String strAction = intent.getAction();
             String telephonyExtra = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
             Log.d("ScreenBroadcastReceiver", strAction);
-            if(telephonyExtra != null) {
+            if (telephonyExtra != null) {
                 Log.d("ScreenBroadcastReceiver", telephonyExtra);
             }
             Log.d("ScreenBroadcastReceiver", "" + SharedPrefUtility.isPCmodeEnabled(context));
             Log.d("ScreenBroadcastReceiver", "" + !uiForbid);
             Log.d("ScreenBroadcastReceiver", "" + (!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")));
-            if(!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")) {
+            if (!SharedPrefUtility.isPCmodeEnabled(context) && !uiForbid && stage.contentEquals("work")) {
                 Log.d("ScreenBroadcastReceiver", "" + strAction.equals(Intent.ACTION_SCREEN_OFF));
                 if ((!screenReceiverForbid && strAction.equals(Intent.ACTION_SCREEN_OFF)) || (telephonyExtra != null
                         && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)
                         || telephonyExtra.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)))) {
-                    if((telephonyExtra != null
+                    if ((telephonyExtra != null
                             && (telephonyExtra.equals(TelephonyManager.EXTRA_STATE_RINGING)
                             || telephonyExtra.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)))) {
                         screenReceiverForbid = true;
                     }
-                    if(countDownTimer == null) {
+                    if (countDownTimer == null) {
                         pauseTimer();
                         setState("pause");
                         Log.d("ScreenBroadcastReceiver", "pause");
@@ -443,7 +449,7 @@ public class TimeService extends Service {
                         countDownTimer.start();
                     }
                     //System.out.println("Screen off " + "LOCKED");
-                } else if((!screenReceiverForbid && strAction.equals(Intent.ACTION_SCREEN_ON)) || (telephonyExtra != null
+                } else if ((!screenReceiverForbid && strAction.equals(Intent.ACTION_SCREEN_ON)) || (telephonyExtra != null
                         && telephonyExtra.equals(TelephonyManager.EXTRA_STATE_IDLE))) {
                     screenReceiverForbid = false;
                     if (timer != null) {
@@ -455,7 +461,7 @@ public class TimeService extends Service {
                         Log.d("ScreenBroadcastReceiver", "start");
                     }
 
-                    if(countDownTimer != null) {
+                    if (countDownTimer != null) {
                         countDownTimer.cancel();
                         countDownTimer = null;
                         Log.d("ScreenBroadcastReceiver", "cancelTimer");
@@ -466,8 +472,9 @@ public class TimeService extends Service {
             }
         }
 
-    };
+    }
 
+    ;
 
 
 }

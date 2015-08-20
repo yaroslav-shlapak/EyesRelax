@@ -7,7 +7,7 @@
         android:layout_width="@dimen/buttons_size"
         android:layout_height="@dimen/buttons_size"
         android:text="Start"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:id="@+id/startButton"
         android:background="@drawable/button_green"
         android:textSize="@dimen/buttons_text_size"

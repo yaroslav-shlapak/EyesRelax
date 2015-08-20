@@ -14,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.voidgreen.eyesrelax.R;
+import com.voidgreen.eyesrelax.animation.CircleProgressView;
 import com.voidgreen.eyesrelax.utilities.Constants;
+import com.voidgreen.eyesrelax.utilities.SharedPrefUtility;
 import com.voidgreen.eyesrelax.utilities.Utility;
 
 /**
@@ -24,10 +26,14 @@ public class ProgressFragment extends Fragment {
     TextView progressTextView;
     TextView stageTextView;
     TextView timeLeftTextView;
+    CircleProgressView mCircleView;
     BroadcastReceiver timeStringReceiver;
     BroadcastReceiver stageStringReceiver;
+    BroadcastReceiver timeIntReceiver;
     Activity activity;
     String progress = Constants.ZERO_PROGRESS;
+    int value = 0;
+    int maxValue = 100;
     String stage = "";
     String timeLeft = "";
 
@@ -53,6 +59,16 @@ public class ProgressFragment extends Fragment {
             }
         };
 
+        timeIntReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateValueCircleView(intent);
+
+            }
+        };
+
+
+
     }
 
     @Override
@@ -62,7 +78,19 @@ public class ProgressFragment extends Fragment {
         progressTextView = (TextView) view.findViewById(R.id.textViewTime);
         stageTextView = (TextView) view.findViewById(R.id.textViewStage);
         timeLeftTextView = (TextView) view.findViewById(R.id.textViewTimeLeft);
+
+        mCircleView = (CircleProgressView) view.findViewById(R.id.circleView);
+        setProgressValue(0);
+        mCircleView.setValueAnimated(24);
         return view;
+    }
+
+    public void setProgressValue(int currentValue) {
+        mCircleView.setMaxValue(maxValue);
+        Log.d(Constants.LOG_ID, "setProgressValue " + maxValue);
+        Log.d(Constants.LOG_ID, "setProgressValue " + currentValue);
+        mCircleView.setValue(currentValue);
+        //mCircleView.setValueAnimated(currentValue, 1500);
     }
 
     @Override
@@ -79,9 +107,12 @@ public class ProgressFragment extends Fragment {
                 new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME));
         activity.registerReceiver((stageStringReceiver),
                 new IntentFilter(Constants.BROADCAST_STAGE_NAME));
+        activity.registerReceiver((timeIntReceiver),
+                new IntentFilter(Constants.BROADCAST_TIME_INT_NAME));
         Intent intent = activity.getIntent();
         updateProgressTextView(intent);
         updateStageTextView(intent);
+        updateValueCircleView(intent);
 
 
         super.onResume();
@@ -99,6 +130,10 @@ public class ProgressFragment extends Fragment {
                 setStage(s2);
                 Log.d(Constants.LOG_ID, "updateProgressFromBundle " + stage);
             }
+            int v = bundle.getInt(Constants.VALUE_KEY, -1);
+            if(v != -1) {
+                value = v;
+            }
 
         } else {
             Context context = activity.getApplicationContext();
@@ -110,16 +145,21 @@ public class ProgressFragment extends Fragment {
 
     private void setStage(String s) {
         Log.d(Constants.LOG_ID, "setStage " + s);
+        Context context = activity.getApplicationContext();
+
         switch(s) {
             case Constants.WORK_STAGE:
             case "work":
                 stage = Constants.WORK_STAGE;
+                maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
                 break;
             case Constants.RELAX_STAGE:
             case "relax":
                 stage = Constants.RELAX_STAGE;
+                maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
                 break;
             default:
+                maxValue = 100;
                 stage = "";
         }
     }
@@ -139,6 +179,7 @@ public class ProgressFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(Constants.PROGRESS_KEY, progress);
         outState.putString(Constants.STAGE_KEY, stage);
+        outState.putInt(Constants.VALUE_KEY, value);
         super.onSaveInstanceState(outState);
     }
 
@@ -148,7 +189,20 @@ public class ProgressFragment extends Fragment {
             progress = s;
         }
         progressTextView.setText(progress);
+        mCircleView.setText(progress);
+
     }
+
+    private void updateValueCircleView(Intent intent) {
+        int v = intent.getIntExtra(Constants.BROADCAST_TIME_INT_DATA, -1);
+
+        if(v != -1) {
+            value = v;
+        }
+        mCircleView.setValue(v);
+        setProgressValue(v);
+    }
+
 
     private void updateStageTextView(Intent intent) {
         String s = intent.getStringExtra(Constants.BROADCAST_STAGE_DATA);
@@ -159,6 +213,7 @@ public class ProgressFragment extends Fragment {
         }
         stageTextView.setText(stage);
         setTimeLeft(stage);
+
         timeLeftTextView.setText(timeLeft);
         Utility.saveStageString(activity.getApplicationContext(), stage);
 
@@ -168,6 +223,8 @@ public class ProgressFragment extends Fragment {
 
         activity.unregisterReceiver(timeStringReceiver);
         activity.unregisterReceiver(stageStringReceiver);
+        activity.unregisterReceiver(timeIntReceiver);
+
         Context context = activity.getApplicationContext();
         Utility.saveTimeString(context, progress);
         Utility.saveStageString(context, stage);

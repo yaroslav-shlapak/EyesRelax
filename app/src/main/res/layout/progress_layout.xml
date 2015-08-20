@@ -5,19 +5,19 @@
     android:layout_height="match_parent" >
 <!--    android:background="@drawable/progress_style">-->
 
-    <com.voidgreen.eyesrelax.animation.CircleProgressView
+    <com.voidgreen.eyesrelax.animation.TimeCircleProgressView
         android:layout_width="450dp"
         android:layout_height="wrap_content"
         android:id="@+id/circleView"
         CircleProgressView:contourSize="0dp"
         CircleProgressView:rimWidth="10dp"
-        CircleProgressView:rimColor="#B2DFDB"
+        CircleProgressView:rimColor="@color/green"
         CircleProgressView:barWidth="20dp"
-        CircleProgressView:barColor="#00796B"
+        CircleProgressView:barColor="@color/green"
         CircleProgressView:showUnit="false"
         CircleProgressView:text="00:00:00"
+        CircleProgressView:textColor="@color/white"
         CircleProgressView:textSize="@dimen/progress_text_size"
-        CircleProgressView:unitColor="#009688"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
