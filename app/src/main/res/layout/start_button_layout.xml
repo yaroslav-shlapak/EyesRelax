@@ -9,7 +9,7 @@
         android:text="Start"
         android:textColor="@color/white"
         android:id="@+id/startButton"
-        android:background="@drawable/button_green"
+        android:background="@drawable/button_play"
         android:textSize="@dimen/buttons_text_size"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />

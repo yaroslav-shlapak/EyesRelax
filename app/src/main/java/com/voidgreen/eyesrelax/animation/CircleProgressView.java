@@ -1056,10 +1056,10 @@ public class CircleProgressView extends View {
         mTextPaint.setSubpixelText(true);
         mTextPaint.setLinearText(true);
         mTextPaint.setTypeface(Typeface.MONOSPACE);
-        //Draw Text
+        //Draw Text////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (mTextColor == -1) //undefined
         {
-            //mTextPaint.setColor(getTextColor(mCurrentValue));
+            mTextPaint.setColor(getTextColor(mCurrentValue));
         }
 
         //set text

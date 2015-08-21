@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:drawable="@drawable/play">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="oval">
+            <corners android:radius="10dp" />
+            <stroke
+                android:width="5dp"
+                android:color="@color/blue" />
+            <!--        <gradient android:startColor="#323232"
+                        android:endColor="#505050"
+                        android:angle="270" />
+                    <corners android:radius="10dp" />
+                <stroke android:width="10dp"
+                    android:color="#fff" />
+                <padding
+                    android:left="50dp"
+                    android:top="50dp"
+                    android:right="50dp"
+                    android:bottom="50dp" />-->
+        </shape>
+    </item>>
+</layer-list>

@@ -121,11 +121,13 @@ public class PauseStopButtonsFragment extends Fragment {
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.pauseTask));
                 activity.startService(intent);
                 pauseButton.setText("Resume");
+                pauseButton.setBackgroundResource(R.drawable.button_resume);
                 break;
             case "Resume":
                 intent.putExtra(resources.getString(R.string.serviceTask), resources.getString(R.string.resumeTask));
                 activity.startService(intent);
                 pauseButton.setText("Pause");
+                pauseButton.setBackgroundResource(R.drawable.button_pause);
                 break;
         }
     }

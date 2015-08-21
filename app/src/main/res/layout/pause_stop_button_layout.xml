@@ -10,7 +10,7 @@
         android:textSize="@dimen/buttons_text_size"
         android:id="@+id/pauseButton"
         android:textColor="@color/white"
-        android:background="@drawable/button_blue"
+        android:background="@drawable/button_pause"
 
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
@@ -25,7 +25,7 @@
         android:textSize="@dimen/buttons_text_size"
         android:id="@+id/stopButton"
         android:textColor="@color/white"
-        android:background="@drawable/button_red"
+        android:background="@drawable/button_stop"
 
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
