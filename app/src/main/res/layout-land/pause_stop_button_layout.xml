@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <Button
+        android:id="@+id/pauseButton"
         android:layout_width="@dimen/buttons_size"
         android:layout_height="@dimen/buttons_size"
-        android:text="Pause"
-        android:textSize="@dimen/buttons_text_size"
-        android:id="@+id/pauseButton"
-        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/buttons_margin"
         android:background="@drawable/button_pause"
 
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/buttons_margin"
-        android:layout_centerHorizontal="true" />/>
+        android:text="Pause"
+        android:textColor="@color/white"
+        android:textSize="@dimen/buttons_text_size" />/>
 
     <Button
+        android:id="@+id/stopButton"
         android:layout_width="@dimen/buttons_size"
         android:layout_height="@dimen/buttons_size"
-        android:text="Stop"
-        android:textSize="@dimen/buttons_text_size"
-        android:id="@+id/stopButton"
-        android:textColor="@color/white"
-        android:background="@drawable/button_stop"
-
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/buttons_margin" />
+        android:layout_marginTop="@dimen/buttons_margin"
+        android:background="@drawable/button_stop"
+
+        android:text="Stop"
+        android:textColor="@color/white"
+        android:textSize="@dimen/buttons_text_size" />
 
 </RelativeLayout>

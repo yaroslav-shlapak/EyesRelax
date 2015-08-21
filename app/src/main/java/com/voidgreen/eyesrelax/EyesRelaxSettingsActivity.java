@@ -3,7 +3,6 @@ package com.voidgreen.eyesrelax;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
-
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
@@ -14,7 +13,7 @@ import com.voidgreen.eyesrelax.preferences.NumberPickerWorkPreference;
 /**
  * Created by y.shlapak on Jun 25, 2015.
  */
-public class EyesRelaxSettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class EyesRelaxSettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

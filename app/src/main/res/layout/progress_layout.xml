@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
     xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent" >
-<!--    android:background="@drawable/progress_style">-->
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--    android:background="@drawable/progress_style">-->
 
     <com.voidgreen.eyesrelax.animation.TimeCircleProgressView
+        android:id="@+id/circleView"
         android:layout_width="450dp"
         android:layout_height="wrap_content"
-        android:id="@+id/circleView"
-        CircleProgressView:contourSize="0dp"
-        CircleProgressView:rimWidth="10dp"
-        CircleProgressView:rimColor="@color/blue"
-        CircleProgressView:barWidth="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         CircleProgressView:barColor="@color/green"
+        CircleProgressView:barWidth="20dp"
+        CircleProgressView:contourSize="0dp"
+        CircleProgressView:rimColor="@color/blue"
+        CircleProgressView:rimWidth="10dp"
         CircleProgressView:showUnit="false"
         CircleProgressView:text="00:00:00"
         CircleProgressView:textColor="@color/white"
-        CircleProgressView:textSize="@dimen/progress_text_size"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        CircleProgressView:textSize="@dimen/progress_text_size" />
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_marginBottom="41dp"
         android:layout_alignBottom="@+id/circleView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/progress_icon_height" />
 
 
 </RelativeLayout>

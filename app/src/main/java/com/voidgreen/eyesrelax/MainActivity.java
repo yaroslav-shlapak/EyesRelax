@@ -24,11 +24,36 @@ import com.voidgreen.eyesrelax.utilities.Utility;
 public class MainActivity extends Activity
         implements StartButtonFragment.OnStartButtonClickListener,
         PauseStopButtonsFragment.OnStopButtonClickListener {
+    public String state = "start";
     TimeService mService;
     boolean mBound = false;
-    public String state = "start";
     PauseStopButtonsFragment pauseStopButtonsFragment;
     StartButtonFragment startButtonFragment;
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            if (Utility.isScreenOn(getApplicationContext())) {
+                Log.d("mConnection", "onServiceConnected");
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
+                mService = binder.getService();
+                mBound = true;
+                setActivityUI();
+            } else {
+                mBound = false;
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +72,7 @@ public class MainActivity extends Activity
         unbindTimeService();
 
     }
+
     public void unbindTimeService() {
         if (mBound) {
             Log.d("MainActivity", "unbindTimeService");
@@ -56,7 +82,7 @@ public class MainActivity extends Activity
     }
 
     private void bindTimeService() {
-        if(Utility.isScreenOn(getApplicationContext())) {
+        if (Utility.isScreenOn(getApplicationContext())) {
             Intent intent = new Intent(this, TimeService.class);
             intent.addCategory(TimeService.TAG);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -64,7 +90,6 @@ public class MainActivity extends Activity
             Log.d("MainActivity", "bindTimeService");
         }
     }
-
 
     @Override
     protected void onPause() {
@@ -97,15 +122,15 @@ public class MainActivity extends Activity
                     break;
 
                 case "pause":
-                    setPauseStopButtonFragment("Pause");
+                    setPauseStopButtonFragment("pause");
                     break;
 
                 case "resume":
-                    setPauseStopButtonFragment("Resume");
+                    setPauseStopButtonFragment("resume");
                     break;
 
                 case "stop":
-                    setPauseStopButtonFragment("Pause");
+                    setPauseStopButtonFragment("pause");
                     this.state = "pause";
                     unbindTimeService();
                     break;
@@ -117,11 +142,11 @@ public class MainActivity extends Activity
             }
         } else {
             Log.d("ActivityOnCreate", "else");
-            if(!Utility.isTimeServiceRunning()) {
+            if (!Utility.isTimeServiceRunning()) {
                 setStartButtonFragment();
             } else {
                 this.state = Utility.getState();
-                switch (this.state){
+                switch (this.state) {
                     case "stop":
                         this.state = "pause";
                         break;
@@ -187,40 +212,15 @@ public class MainActivity extends Activity
         }
     }
 
-
     @Override
     public void onStartButtonClick() {
-        setPauseStopButtonFragment("Pause");
+        setPauseStopButtonFragment("pause");
     }
 
     @Override
     public void onStopButtonClick() {
         setStartButtonFragment();
     }
-
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            if(Utility.isScreenOn(getApplicationContext())) {
-                Log.d("mConnection", "onServiceConnected");
-                // We've bound to LocalService, cast the IBinder and get LocalService instance
-                TimeService.TimeBinder binder = (TimeService.TimeBinder) service;
-                mService = binder.getService();
-                mBound = true;
-                setActivityUI();
-            } else {
-                mBound = false;
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-        }
-    };
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

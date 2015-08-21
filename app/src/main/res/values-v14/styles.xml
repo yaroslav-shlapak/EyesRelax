@@ -6,6 +6,5 @@
     </style>
 
     <!-- Settings activity action bar styles -->
-    <style name="ActionBar.V14.Sunshine.NoTitle" parent="@android:style/Widget.Holo.ActionBar.Solid">
-    </style>
+    <style name="ActionBar.V14.Sunshine.NoTitle" parent="@android:style/Widget.Holo.ActionBar.Solid"></style>
 </resources>

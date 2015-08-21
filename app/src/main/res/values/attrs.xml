@@ -31,8 +31,8 @@
         <attr name="rimWidth" format="dimension" />
 
         <!-- Contour-->
-        <attr name="contourColor" format="color"/>
-        <attr name="contourSize" format="dimension"/>
+        <attr name="contourColor" format="color" />
+        <attr name="contourSize" format="dimension" />
 
         <!-- Background color-->
         <attr name="fillColor" format="color" />

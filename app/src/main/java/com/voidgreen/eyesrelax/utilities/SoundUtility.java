@@ -23,7 +23,7 @@ public class SoundUtility {
     }
 
     private static void playTrack(Context context, int track) {
-        if(SharedPrefUtility.isSoundEnabled(context)) {
+        if (SharedPrefUtility.isSoundEnabled(context)) {
             MediaPlayer mp = MediaPlayer.create(context, track);
             mp.start();
         }

@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.voidgreen.eyesrelax"
     android:installLocation="internalOnly">
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -41,8 +42,9 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.TimeService"
-            android:exported="false"/>
+        <service
+            android:name=".service.TimeService"
+            android:exported="false" />
     </application>
 
 

@@ -17,13 +17,9 @@ import com.voidgreen.eyesrelax.utilities.Utility;
 public class OnBootCompletedBroadcastREceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("OnBootCompletedBroadcastReceiver", "onReceive before if");
 
-        Utility.saveTimeString(context, Constants.ZERO_PROGRESS);
-        Utility.saveStageString(context, Constants.WORK_STAGE);
 
-        if(SharedPrefUtility.isStartOnBootEnabled(context)) {
-            Log.d("OnBootCompletedBroadcastReceiver", "onReceive in if");
+        if (SharedPrefUtility.isStartOnBootEnabled(context)) {
 
             Resources resources = context.getResources();
             Intent serviceIntent = new Intent(context, TimeService.class);

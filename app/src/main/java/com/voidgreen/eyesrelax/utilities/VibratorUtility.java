@@ -8,7 +8,7 @@ import android.os.Vibrator;
  */
 public class VibratorUtility {
     public static void vibrateLong(Context context) {
-        if(SharedPrefUtility.isVibrationEnabled(context)) {
+        if (SharedPrefUtility.isVibrationEnabled(context)) {
             // Get instance of Vibrator from current Context
             long vt = 300;
             long dt = 800;
@@ -22,7 +22,7 @@ public class VibratorUtility {
     }
 
     public static void vibrateShort(Context context) {
-        if(SharedPrefUtility.isVibrationEnabled(context)) {
+        if (SharedPrefUtility.isVibrationEnabled(context)) {
             // Get instance of Vibrator from current Context
             long vt = 300;
             long dt = 300;
@@ -38,14 +38,14 @@ public class VibratorUtility {
         //Log.d("vibrate", pattern.toString());
         // Get instance of Vibrator from current Context
 
-            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-            // Output yes if can vibrate, no otherwise
-            if (v.hasVibrator()) {
-                // The '-1' here means to vibrate once, as '-1' is out of bounds in the pattern array
-                v.vibrate(pattern, -1);
-            } else {
+        // Output yes if can vibrate, no otherwise
+        if (v.hasVibrator()) {
+            // The '-1' here means to vibrate once, as '-1' is out of bounds in the pattern array
+            v.vibrate(pattern, -1);
+        } else {
 
-            }
+        }
     }
 }

@@ -42,11 +42,6 @@ public class ProgressFragment extends Fragment {
         updateValues();
 
 
-        Log.d(Constants.LOG_ID, "onCreate " + stage);
-        progress = Utility.getNotificationString();
-        stage = Utility.getStage();
-        value = Utility.getStageTime();
-
         timeStringReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -73,19 +68,19 @@ public class ProgressFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.progress_layout, container, false);
-
+        updateValues();
         mCircleView = (CircleProgressView) view.findViewById(R.id.circleView);
         imageView = (ImageView) view.findViewById(R.id.imageView);
-        setProgressValue(0);
+        setProgressValue(value);
         return view;
     }
 
     public void setProgressValue(int currentValue) {
         mCircleView.setMaxValue(maxValue);
-        Log.d(Constants.LOG_ID, "setProgressValue " + maxValue);
-        Log.d(Constants.LOG_ID, "setProgressValue " + currentValue);
-        mCircleView.setValue(currentValue);
-        //mCircleView.setValueAnimated(currentValue, 1500);
+        Log.d(Constants.LOG_ID, "setProgressValue maxValue = " + maxValue);
+        Log.d(Constants.LOG_ID, "setProgressValue currentValue = " + currentValue);
+        //mCircleView.setValue(currentValue);
+        mCircleView.setValueAnimated(currentValue, 300);
     }
 
     @Override
@@ -112,6 +107,7 @@ public class ProgressFragment extends Fragment {
         updateValueCircleView(intent);
         setStageImage();
 
+
         super.onResume();
     }
 
@@ -120,6 +116,7 @@ public class ProgressFragment extends Fragment {
         stage = Utility.getStage();
         value = Utility.getStageTime();
         setStageImage();
+        setStage(stage);
     }
 
     private void setStage(String s) {
@@ -127,7 +124,7 @@ public class ProgressFragment extends Fragment {
         Context context = activity.getApplicationContext();
 
         stage = s;
-        switch(s) {
+        switch (s) {
             case "work":
                 //imageView.setImageResource(android.R.color.transparent);
                 maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
@@ -136,26 +133,29 @@ public class ProgressFragment extends Fragment {
                 //imageView.setImageResource(android.R.color.transparent);
                 maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
                 break;
+            default:
+
         }
     }
 
     private void setStageImage() {
-        if(imageView != null) {
+        if (imageView != null) {
             Context context = activity.getApplicationContext();
             switch (stage) {
                 case "work":
                     imageView.setImageResource(R.drawable.eye_white_open_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.red));
-                    mCircleView.setTextColor(getResources().getColor(R.color.white));
+                    mCircleView.setTextColor(getResources().getColor(R.color.red));
                     maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
                     break;
                 case "relax":
                     imageView.setImageResource(R.drawable.eye_white_closed_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.green));
-                    mCircleView.setTextColor(getResources().getColor(R.color.white));
+                    mCircleView.setTextColor(getResources().getColor(R.color.green));
                     maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
                     break;
                 default:
+                    mCircleView.setTextColor(getResources().getColor(R.color.white));
                     maxValue = 0;
                     imageView.setImageDrawable(null);
             }
@@ -172,7 +172,7 @@ public class ProgressFragment extends Fragment {
 
     private void updateProgressTextView(Intent intent) {
         String s = intent.getStringExtra(Constants.BROADCAST_TIME_STRING_DATA);
-        if(s != null) {
+        if (s != null) {
             progress = s;
         }
         mCircleView.setText(progress);
@@ -182,16 +182,18 @@ public class ProgressFragment extends Fragment {
     private void updateValueCircleView(Intent intent) {
         int v = intent.getIntExtra(Constants.BROADCAST_TIME_INT_DATA, -1);
 
-        if(v != -1) {
+        if (v != -1) {
             value = v;
         }
+
+        Log.d(Constants.LOG_ID, "updateValueCircleView value = " + value);
         setProgressValue(value);
     }
 
 
     private void updateStageTextView(Intent intent) {
         String s = intent.getStringExtra(Constants.BROADCAST_STAGE_DATA);
-        if(s != null) {
+        if (s != null) {
 
             setStage(s);
             Log.d(Constants.LOG_ID, "updateStageTextView " + stage);
@@ -199,6 +201,7 @@ public class ProgressFragment extends Fragment {
 
         setStageImage();
     }
+
     @Override
     public void onPause() {
         activity.unregisterReceiver(timeStringReceiver);

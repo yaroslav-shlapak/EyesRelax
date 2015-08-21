@@ -13,35 +13,35 @@
             android:summary="Work time"
             android:title="@string/pref_title_work_period" />
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="@string/pref_key_30s_notification"
-            android:title="@string/pref_title_30s_notification"
-            android:defaultValue="true"/>
+            android:title="@string/pref_title_30s_notification" />
         />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="ALARM SETTINGS">
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="@string/pref_key_vibration"
-            android:title="@string/pref_title_vibration"
-            android:defaultValue="true"/>
+            android:title="@string/pref_title_vibration" />
         />
         <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/pref_key_sound"
-            android:title="@string/pref_title_sound"
-            android:defaultValue="false"/>
+            android:title="@string/pref_title_sound" />
         />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="OTHER">
         <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/pref_key_start_on_boot"
-            android:title="@string/pref_title_start_on_boot"
-            android:defaultValue="false"/>
+            android:title="@string/pref_title_start_on_boot" />
         />
         <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/pref_key_pc_mode"
-            android:title="@string/pref_title_pc_mode"
-            android:defaultValue="false"/>
+            android:title="@string/pref_title_pc_mode" />
         />
     </PreferenceCategory>
 </PreferenceScreen>

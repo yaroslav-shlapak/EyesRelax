@@ -48,7 +48,7 @@ public final class Constants {
     public static final int TEXT_SIZE = 10;
     public static final int PROGRESS_SIZE = 20;
 
-    public static final String TIME_LEFT= "Time left: ";
+    public static final String TIME_LEFT = "Time left: ";
 
     public static final String LOG_ID = "eyesrelax.log";
 

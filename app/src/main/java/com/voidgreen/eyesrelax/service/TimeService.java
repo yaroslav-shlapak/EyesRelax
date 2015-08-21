@@ -32,30 +32,35 @@ import com.voidgreen.eyesrelax.utilities.VibratorUtility;
 public class TimeService extends Service {
     final public static String TAG = "TimeService";
     public static boolean serviceRunning = false;
-    private final IBinder mBinder = new TimeBinder();
-    BroadcastReceiver screenOnOffReceiver;
-    private EyesRelaxCountDownTimer timer;
-    private Notification.Builder notificationBuilder;
-
-    private NotificationManager mNotificationManager;
-    private boolean uiForbid;
-    private boolean screenReceiverForbid = false;
-
     private static long stageTime;
     private static String state = "start";
     private static String stage = "work";
     private static String notificationString = Constants.ZERO_PROGRESS;
+    private final IBinder mBinder = new TimeBinder();
+    BroadcastReceiver screenOnOffReceiver;
+    private EyesRelaxCountDownTimer timer;
+    private Notification.Builder notificationBuilder;
+    private NotificationManager mNotificationManager;
+    private boolean uiForbid;
+    private boolean screenReceiverForbid = false;
 
     public static long getStageTime() {
+        Log.d(Constants.LOG_ID, "Time service getStageTime stageTime = " + stageTime);
         return stageTime;
     }
 
     public static void setStageTime(long stageTime) {
+        Log.d(Constants.LOG_ID, "Time service setStageTime stageTime = " + stageTime);
         TimeService.stageTime = stageTime;
     }
 
     public static String getStage() {
         return stage;
+    }
+
+    public void setStage(String stage) {
+        this.stage = stage;
+        sendStageString(stage);
     }
 
     public static String getNotificationString() {
@@ -66,17 +71,13 @@ public class TimeService extends Service {
         TimeService.notificationString = notificationString;
     }
 
-    public void setStage(String stage) {
-        this.stage = stage;
-        sendStageString(stage);
-    }
-
     public static String getState() {
         return state;
     }
 
     public void setState(String state) {
         this.state = state;
+        Log.d(Constants.LOG_ID, "Time service state = " + state);
     }
 
     @Override
@@ -119,8 +120,8 @@ public class TimeService extends Service {
                             if (Utility.isScreenOn(context) || SharedPrefUtility.isPCmodeEnabled(context)) {
                                 startCountdownNotification(R.string.workStageTitle, R.string.workStageMessage,
                                         R.drawable.ic_eye_open, R.drawable.eye_white_open_notification_large);
-                                stageTime = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
-                                        + Constants.SEC_TO_MILLIS_MULT;
+                                setStageTime(SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT
+                                        + Constants.SEC_TO_MILLIS_MULT);
                                 timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                                 timer.create();
                             }
@@ -128,8 +129,8 @@ public class TimeService extends Service {
                         case "relax":
                             startCountdownNotification(R.string.relaxStageTitle, R.string.relaxStageMessage,
                                     R.drawable.ic_eye_closed, R.drawable.eye_white_closed_notification_large);
-                            stageTime = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT
-                                    + Constants.SEC_TO_MILLIS_MULT;
+                            setStageTime(SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT
+                                    + Constants.SEC_TO_MILLIS_MULT);
                             timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                             timer.create();
                             break;
@@ -189,6 +190,7 @@ public class TimeService extends Service {
 
     @Override
     public void onDestroy() {
+        setStage("start");
         super.onDestroy();
         stopTimer();
         Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
@@ -221,14 +223,14 @@ public class TimeService extends Service {
     }
 
     private void finishAll() {
-        sendTimeString(Constants.ZERO_PROGRESS);
+
         sendTimeInt(0);
+        sendTimeString(Constants.ZERO_PROGRESS);
         updateNotification(Constants.ZERO_PROGRESS);
 
         Utility.saveTimeString(getApplicationContext(), Constants.ZERO_PROGRESS);
         setState("start");
         timer = null;
-
     }
 
     private void startCountdownNotification(int titleText, int tickerText, int smallIcon, int largeIcon) {
@@ -301,6 +303,8 @@ public class TimeService extends Service {
     }
 
     public void sendTimeInt(int message) {
+        setStageTime(message);
+        Log.d(Constants.LOG_ID, "Time service sendTimeInt stageTime = " + message);
         Intent intent = new Intent(Constants.BROADCAST_TIME_INT_NAME);
         intent.putExtra(Constants.BROADCAST_TIME_INT_DATA, message);
         sendBroadcast(intent);
@@ -383,8 +387,11 @@ public class TimeService extends Service {
         @Override
         public void onFinish() {
             finishAll();
+
+
             VibratorUtility.vibrateLong(getApplicationContext());
             Context context = getApplicationContext();
+
 
             //Log.d("TimerFinished", stage);
             //stopForeground(true);

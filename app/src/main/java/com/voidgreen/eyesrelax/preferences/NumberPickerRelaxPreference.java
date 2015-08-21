@@ -21,6 +21,10 @@ public class NumberPickerRelaxPreference extends NumberPickerPreference {
         super(context, attrs, defStyleAttr);
     }
 
+    public static int getNumValue(int index) {
+        return index * STEP + MIN_VALUE;
+    }
+
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -29,10 +33,6 @@ public class NumberPickerRelaxPreference extends NumberPickerPreference {
         picker.setMaxValue(VALUES.length - 1);
         picker.setDisplayedValues(VALUES);
         picker.setValue(getValue());
-    }
-
-    public static int getNumValue(int index) {
-        return index * STEP + MIN_VALUE;
     }
 
 }

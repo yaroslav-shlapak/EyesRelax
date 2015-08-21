@@ -1,14 +1,10 @@
 package com.voidgreen.eyesrelax.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.voidgreen.eyesrelax.R;
 
@@ -27,8 +23,6 @@ public class TempProgressFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
 
 
     }

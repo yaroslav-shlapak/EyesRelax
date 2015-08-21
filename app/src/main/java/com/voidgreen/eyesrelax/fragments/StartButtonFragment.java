@@ -2,10 +2,10 @@ package com.voidgreen.eyesrelax.fragments;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +14,6 @@ import android.widget.Button;
 
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.service.TimeService;
-import com.voidgreen.eyesrelax.utilities.Constants;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -22,9 +21,6 @@ import com.voidgreen.eyesrelax.utilities.Constants;
 public class StartButtonFragment extends Fragment {
     OnStartButtonClickListener startButtonCallBack;
 
-    public interface OnStartButtonClickListener {
-        public void onStartButtonClick();
-    }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -67,5 +63,9 @@ public class StartButtonFragment extends Fragment {
                 startButtonCallBack.onStartButtonClick();
             }
         });
+    }
+
+    public interface OnStartButtonClickListener {
+        public void onStartButtonClick();
     }
 }

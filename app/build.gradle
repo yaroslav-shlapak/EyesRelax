@@ -13,12 +13,12 @@ android {
     }
 
     signingConfigs {
-         release {
-             storeFile file("C:\\Users\\Void\\Google Drive\\other\\keystore\\binary_key_for_android.jks")
-             storePassword "Gyroscope2012"
-             keyAlias "ReleaseKey"
-             keyPassword "Gyroscope2012"
-         }
+        release {
+            storeFile file("C:\\Users\\Void\\Google Drive\\other\\keystore\\binary_key_for_android.jks")
+            storePassword "Gyroscope2012"
+            keyAlias "ReleaseKey"
+            keyPassword "Gyroscope2012"
+        }
     }
     buildTypes {
         release {

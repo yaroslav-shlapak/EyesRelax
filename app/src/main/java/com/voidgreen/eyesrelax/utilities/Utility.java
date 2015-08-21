@@ -104,6 +104,7 @@ public class Utility {
 
     /**
      * Is the screen of the device on.
+     *
      * @param context the context
      * @return true when (at least one) screen is on
      */
@@ -128,7 +129,7 @@ public class Utility {
     }
 
     public static String getState() {
-        if(isTimeServiceRunning())  {
+        if (isTimeServiceRunning()) {
             return TimeService.getState();
         } else {
             return Constants.DEFAULT_STATE;
@@ -136,14 +137,15 @@ public class Utility {
     }
 
     public static String getStage() {
-        if(isTimeServiceRunning())  {
+        if (isTimeServiceRunning()) {
             return TimeService.getStage();
         } else {
             return Constants.DEFAULT_STAGE;
         }
     }
+
     public static String getNotificationString() {
-        if(isTimeServiceRunning())  {
+        if (isTimeServiceRunning()) {
             return TimeService.getNotificationString();
         } else {
             return Constants.DEFAULT_TIME_STRING;
@@ -152,7 +154,7 @@ public class Utility {
 
 
     public static int getStageTime() {
-        if(isTimeServiceRunning())  {
+        if (isTimeServiceRunning()) {
             return (int) TimeService.getStageTime();
         } else {
             return Constants.DEFAULT_STAGE_TIME;

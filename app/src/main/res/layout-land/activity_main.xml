@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <fragment
-        android:name="com.voidgreen.eyesrelax.fragments.ProgressFragment"
         android:id="@+id/progressFragment"
+        android:name="com.voidgreen.eyesrelax.fragments.ProgressFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
-    </fragment>
+        android:layout_weight="1"></fragment>
 
     <FrameLayout
         android:id="@+id/buttonsFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3">
-    </FrameLayout>
+        android:layout_weight="3"></FrameLayout>
 
 </LinearLayout>
