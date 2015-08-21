@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.animation.CircleProgressView;
@@ -32,7 +31,7 @@ public class ProgressFragment extends Fragment {
     Activity activity;
     String progress = Constants.ZERO_PROGRESS;
     int value = 0;
-    int maxValue = 100;
+    int maxValue = 0;
     String stage = "";
     String timeLeft = "";
 
@@ -40,10 +39,13 @@ public class ProgressFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        updateProgressFromBundle(savedInstanceState);
+        updateValues();
 
 
         Log.d(Constants.LOG_ID, "onCreate " + stage);
+        progress = Utility.getNotificationString();
+        stage = Utility.getStage();
+        value = Utility.getStageTime();
 
         timeStringReceiver = new BroadcastReceiver() {
             @Override
@@ -63,12 +65,8 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateValueCircleView(intent);
-
             }
         };
-
-
-
     }
 
     @Override
@@ -100,7 +98,7 @@ public class ProgressFragment extends Fragment {
         // Register to receive messages.
         // We are registering an observer (mMessageReceiver) to receive Intents
         // with actions named "custom-event-name".
-        getStringsFromBundle();
+        updateValues();
 
         activity.registerReceiver((timeStringReceiver),
                 new IntentFilter(Constants.BROADCAST_TIME_STRING_NAME));
@@ -114,37 +112,13 @@ public class ProgressFragment extends Fragment {
         updateValueCircleView(intent);
         setStageImage();
 
-
         super.onResume();
     }
 
-    private void updateProgressFromBundle(Bundle bundle) {
-        if(bundle != null) {
-            String s1 = bundle.getString(Constants.PROGRESS_KEY);
-            Log.d(Constants.LOG_ID, "updateProgressFromBundle bundle is not null");
-            if(s1 != null) {
-                progress = s1;
-                Log.d(Constants.LOG_ID, "updateProgressFromBundle progress = " + progress);
-            }
-            String s2 = bundle.getString(Constants.STAGE_KEY);
-            if(s2 != null) {
-
-                setStage(s2);
-                Log.d(Constants.LOG_ID, "updateProgressFromBundle " + stage);
-            }
-            int v = bundle.getInt(Constants.VALUE_KEY, -1);
-            if(v != -1) {
-                value = v;
-                Log.d(Constants.LOG_ID, "updateProgressFromBundle value = " + value);
-            }
-
-        } else {
-            Log.d(Constants.LOG_ID, "updateProgressFromBundle else");
-            Context context = activity.getApplicationContext();
-            progress = Utility.getSavedTimeString(context);
-            stage = Utility.getStageString(context);
-            value = Utility.getTimeValue(context);
-        }
+    private void updateValues() {
+        progress = Utility.getNotificationString();
+        stage = Utility.getStage();
+        value = Utility.getStageTime();
         setStageImage();
     }
 
@@ -152,22 +126,16 @@ public class ProgressFragment extends Fragment {
         Log.d(Constants.LOG_ID, "setStage " + s);
         Context context = activity.getApplicationContext();
 
+        stage = s;
         switch(s) {
-            case Constants.WORK_STAGE:
             case "work":
-                stage = Constants.WORK_STAGE;
                 //imageView.setImageResource(android.R.color.transparent);
                 maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
                 break;
-            case Constants.RELAX_STAGE:
             case "relax":
-                stage = Constants.RELAX_STAGE;
                 //imageView.setImageResource(android.R.color.transparent);
                 maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
                 break;
-            default:
-                maxValue = 100;
-                stage = "";
         }
     }
 
@@ -175,19 +143,21 @@ public class ProgressFragment extends Fragment {
         if(imageView != null) {
             Context context = activity.getApplicationContext();
             switch (stage) {
-                case Constants.WORK_STAGE:
+                case "work":
                     imageView.setImageResource(R.drawable.eye_white_open_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.red));
                     mCircleView.setTextColor(getResources().getColor(R.color.white));
                     maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
                     break;
-                case Constants.RELAX_STAGE:
+                case "relax":
                     imageView.setImageResource(R.drawable.eye_white_closed_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.green));
                     mCircleView.setTextColor(getResources().getColor(R.color.white));
                     maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
                     break;
                 default:
+                    maxValue = 0;
+                    imageView.setImageDrawable(null);
             }
         }
     }
@@ -216,7 +186,6 @@ public class ProgressFragment extends Fragment {
             value = v;
         }
         setProgressValue(value);
-        Utility.saveTimeValue(activity.getApplicationContext(), v);
     }
 
 
@@ -229,36 +198,13 @@ public class ProgressFragment extends Fragment {
         }
 
         setStageImage();
-        Utility.saveStageString(activity.getApplicationContext(), stage);
-
     }
     @Override
     public void onPause() {
-
         activity.unregisterReceiver(timeStringReceiver);
         activity.unregisterReceiver(stageStringReceiver);
         activity.unregisterReceiver(timeIntReceiver);
 
-        Context context = activity.getApplicationContext();
-        Utility.saveTimeString(context, progress);
-        Utility.saveStageString(context, stage);
-        Utility.saveTimeValue(context, value);
-
-        putStringToBundle();
         super.onPause();
     }
-
-    private void putStringToBundle() {
-        Intent mIntent = new Intent(activity, ProgressFragment.class);
-        Bundle extras = mIntent.getExtras();
-        updateProgressFromBundle(extras);
-    }
-
-    private void getStringsFromBundle() {
-            Intent mIntent = new Intent(activity, ProgressFragment.class);
-            Bundle bundle = mIntent.getExtras();
-            updateProgressFromBundle(bundle);
-    }
-
-
 }

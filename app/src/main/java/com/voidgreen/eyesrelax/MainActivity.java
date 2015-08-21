@@ -26,6 +26,7 @@ public class MainActivity extends Activity
         PauseStopButtonsFragment.OnStopButtonClickListener {
     TimeService mService;
     boolean mBound = false;
+    public String state = "start";
     PauseStopButtonsFragment pauseStopButtonsFragment;
     StartButtonFragment startButtonFragment;
 
@@ -71,12 +72,14 @@ public class MainActivity extends Activity
         // Unbind from the service
         Log.d("MainActivity", "onPause");
         unbindTimeService();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume");
+        state = Utility.getState();
         bindTimeService();
     }
 
@@ -87,6 +90,7 @@ public class MainActivity extends Activity
             // occur in a separate thread to avoid slowing down the activity performance.
             String state = mService.getState();
             Log.d("setActivityUI", state);
+            this.state = state;
             switch (state) {
                 case "start":
                     setStartButtonFragment();
@@ -102,6 +106,7 @@ public class MainActivity extends Activity
 
                 case "stop":
                     setPauseStopButtonFragment("Pause");
+                    this.state = "pause";
                     unbindTimeService();
                     break;
 
@@ -112,8 +117,15 @@ public class MainActivity extends Activity
             }
         } else {
             Log.d("ActivityOnCreate", "else");
-            if(!isTimeServiceRunning()) {
+            if(!Utility.isTimeServiceRunning()) {
                 setStartButtonFragment();
+            } else {
+                this.state = Utility.getState();
+                switch (this.state){
+                    case "stop":
+                        this.state = "pause";
+                        break;
+                }
             }
         }
     }
@@ -220,7 +232,5 @@ public class MainActivity extends Activity
         return false;
     }
 
-    private boolean isTimeServiceRunning() {
-        return TimeService.serviceRunning;
-    }
+
 }

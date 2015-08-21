@@ -10,6 +10,7 @@ import android.view.Display;
 import android.widget.Toast;
 
 import com.voidgreen.eyesrelax.R;
+import com.voidgreen.eyesrelax.service.TimeService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -121,4 +122,42 @@ public class Utility {
             return powerManager.isScreenOn();
         }
     }
+
+    public static boolean isTimeServiceRunning() {
+        return TimeService.serviceRunning;
+    }
+
+    public static String getState() {
+        if(isTimeServiceRunning())  {
+            return TimeService.getState();
+        } else {
+            return Constants.DEFAULT_STATE;
+        }
+    }
+
+    public static String getStage() {
+        if(isTimeServiceRunning())  {
+            return TimeService.getStage();
+        } else {
+            return Constants.DEFAULT_STAGE;
+        }
+    }
+    public static String getNotificationString() {
+        if(isTimeServiceRunning())  {
+            return TimeService.getNotificationString();
+        } else {
+            return Constants.DEFAULT_TIME_STRING;
+        }
+    }
+
+
+    public static int getStageTime() {
+        if(isTimeServiceRunning())  {
+            return (int) TimeService.getStageTime();
+        } else {
+            return Constants.DEFAULT_STAGE_TIME;
+        }
+    }
+
+
 }

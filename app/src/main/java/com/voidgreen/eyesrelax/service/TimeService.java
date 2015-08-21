@@ -36,27 +36,47 @@ public class TimeService extends Service {
     BroadcastReceiver screenOnOffReceiver;
     private EyesRelaxCountDownTimer timer;
     private Notification.Builder notificationBuilder;
-    private Notification notification;
-    private String state = "start";
+
     private NotificationManager mNotificationManager;
     private boolean uiForbid;
     private boolean screenReceiverForbid = false;
-    private String stage = "work";
-    private long stageTime;
+
+    private static long stageTime;
+    private static String state = "start";
+    private static String stage = "work";
+    private static String notificationString = Constants.ZERO_PROGRESS;
+
+    public static long getStageTime() {
+        return stageTime;
+    }
+
+    public static void setStageTime(long stageTime) {
+        TimeService.stageTime = stageTime;
+    }
+
+    public static String getStage() {
+        return stage;
+    }
+
+    public static String getNotificationString() {
+        return notificationString;
+    }
+
+    public static void setNotificationString(String notificationString) {
+        TimeService.notificationString = notificationString;
+    }
 
     public void setStage(String stage) {
         this.stage = stage;
         sendStageString(stage);
-        //Log.d("TimeService", "setStage : " + stage );
     }
 
-    public String getState() {
+    public static String getState() {
         return state;
     }
 
     public void setState(String state) {
         this.state = state;
-        Log.d("TimeService", "setState : " + state);
     }
 
     @Override
@@ -71,7 +91,6 @@ public class TimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Resources resources = getResources();
-        Log.d("onStartCommand", "onStartCommand");
 
         String task = "";
         if (intent != null && intent.getExtras() != null) {
@@ -79,8 +98,6 @@ public class TimeService extends Service {
         }
         screenReceiverForbid = false;
         uiForbid = true;
-        Log.d("task", task);
-        Log.d("stage", stage);
         timeSequence(task, stage);
         return super.onStartCommand(intent, flags, startId);
     }
@@ -94,7 +111,6 @@ public class TimeService extends Service {
                 //Utility.showToast(context, "onHandleIntent:start");
                 setState("stop");
                 uiForbid = false;
-                Log.d("onStartCommand", "start");
                 if (timer == null) {
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getWorkTime(context)));
                     //Log.d("onStartCommand", "" + (SettingsDataUtility.getRelaxTime(context)));
@@ -117,11 +133,7 @@ public class TimeService extends Service {
                             timer = new EyesRelaxCountDownTimer(stageTime, Constants.TICK_PERIOD, true);
                             timer.create();
                             break;
-                        default:
-                            stageTime = 0;
-                            break;
                     }
-                    Log.d("timeSequence", "start");
                 }
                 break;
 
@@ -342,10 +354,7 @@ public class TimeService extends Service {
             }
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
-            String notificationString = Utility.combinationFormatter(millisUntilFinished);
-            Log.d("onTick", "" + stageTime);
-            Log.d("onTick", "" + millisUntilFinished);
-            Log.d("onTick", notificationString);
+            notificationString = Utility.combinationFormatter(millisUntilFinished);
             updateNotification(Constants.TIME_LEFT + notificationString);
             sendTimeInt((int) millisUntilFinished);
             sendTimeString(notificationString);

@@ -52,8 +52,12 @@ public final class Constants {
 
     public static final String LOG_ID = "eyesrelax.log";
 
-    public static final String DEFAULT_STAGE = "WORK STAGE";
     public static final String WORK_STAGE = "WORK STAGE";
     public static final String RELAX_STAGE = "RELAX STAGE";
+
+    public static final String DEFAULT_STATE = "start";
+    public static final String DEFAULT_STAGE = "";
+    public static final String DEFAULT_TIME_STRING = ZERO_PROGRESS;
+    public static final int DEFAULT_STAGE_TIME = 0;
 
 }
