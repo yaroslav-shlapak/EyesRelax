@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.voidgreen.eyesrelax.MainActivity;
 import com.voidgreen.eyesrelax.R;
 import com.voidgreen.eyesrelax.service.TimeService;
+import com.voidgreen.eyesrelax.utilities.Utility;
 
 /**
  * Created by Void on 28-Jun-15.
@@ -83,6 +84,19 @@ public class PauseStopButtonsFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        state = Utility.getState(getActivity().getApplicationContext());
+        updatePauseResumeButton(state);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Utility.saveState(getActivity().getApplicationContext(), state);
     }
 
     public void setState(String state) {

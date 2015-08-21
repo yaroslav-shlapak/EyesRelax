@@ -26,6 +26,9 @@ public final class Constants {
     public static final String TIME_VALUE_SHARED_PREFERENCE =
             "com.voidgreen.eyesrelax.TIME_VALUE_SHARED_PREFERENCE";
 
+    public static final String PAUSE_STOP_BUTTONS_STATE =
+            "com.voidgreen.eyesrelax.PAUSE_STOP_BUTTONS_STATE";
+
     public static final int NOTIFICATION_COUNTDOWN_ID = 101;
     public static final int NOTIFICATION_FINISHED_ID = 102;
 

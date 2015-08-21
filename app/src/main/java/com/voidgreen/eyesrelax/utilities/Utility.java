@@ -85,6 +85,21 @@ public class Utility {
         editor.apply();
     }
 
+    public static String getState(Context context) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        return batteryInfoSharedPref.getString
+                (Constants.PAUSE_STOP_BUTTONS_STATE, "Pause");
+    }
+
+    public static void saveState(Context context, String value) {
+        SharedPreferences batteryInfoSharedPref = context.getSharedPreferences(context.getString(R.string.eyesRelaxSharedPref),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = batteryInfoSharedPref.edit();
+        editor.putString(Constants.PAUSE_STOP_BUTTONS_STATE, value);
+        editor.apply();
+    }
+
 
     /**
      * Is the screen of the device on.
