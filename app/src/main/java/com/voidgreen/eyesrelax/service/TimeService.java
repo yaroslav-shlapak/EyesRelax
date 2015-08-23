@@ -14,6 +14,7 @@ import android.content.res.Resources;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -359,7 +360,7 @@ public class TimeService extends Service {
             // Broadcasts the Intent to receivers in this app.
             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
             notificationString = Utility.combinationFormatter(millisUntilFinished);
-            updateNotification(Constants.TIME_LEFT + notificationString);
+            updateNotification(getApplicationContext().getResources().getString(R.string.timeLeftNotification) + " " + notificationString);
             sendTimeInt((int) millisUntilFinished);
             sendTimeString(notificationString);
             Context context = getApplicationContext();
@@ -387,7 +388,6 @@ public class TimeService extends Service {
         @Override
         public void onFinish() {
             finishAll();
-
 
             VibratorUtility.vibrateLong(getApplicationContext());
             Context context = getApplicationContext();

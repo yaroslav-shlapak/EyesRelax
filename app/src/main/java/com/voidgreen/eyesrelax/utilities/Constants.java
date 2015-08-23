@@ -43,7 +43,7 @@ public final class Constants {
 
     public static final long TICK_PERIOD = 1000;
     public static final int SEC_TO_MILLIS_MULT = 1000;
-    public static final int MIN_TO_MILLIS_MULT = 1000; // 60 * 1000; //
+    public static final int MIN_TO_MILLIS_MULT = 1000 * 60; // 60 * 1000; //
 
     public static final int TEXT_SIZE = 10;
     public static final int PROGRESS_SIZE = 20;

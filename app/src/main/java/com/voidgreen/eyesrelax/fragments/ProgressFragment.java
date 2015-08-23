@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,13 +146,13 @@ public class ProgressFragment extends Fragment {
                 case "work":
                     imageView.setImageResource(R.drawable.eye_white_open_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.red));
-                    mCircleView.setTextColor(getResources().getColor(R.color.red));
+                    //mCircleView.setTextColor(getResources().getColor(R.color.red));
                     maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
                     break;
                 case "relax":
                     imageView.setImageResource(R.drawable.eye_white_closed_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.green));
-                    mCircleView.setTextColor(getResources().getColor(R.color.green));
+                    //mCircleView.setTextColor(getResources().getColor(R.color.green));
                     maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
                     break;
                 default:

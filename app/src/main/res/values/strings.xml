@@ -40,7 +40,7 @@
     <string name="workStageTitle">Working with EyesRelax</string>
     <string name="relaxStageTitle">On a break…</string>
     <string name="relaxStageMessage">Take a break</string>
-    <string name="workStageMessage">Start working with EyesRelax</string>
+    <string name="workStageMessage">EyesRelax has started working</string>
 
 
     <string name="prerelaxStageMessage">Prepare for a break in 30 seconds</string>
@@ -50,4 +50,10 @@
     <string name="relaxStage">RELAX STAGE</string>
     <string name="timeLeft">TIME LEFT:</string>
 
+
+    <string name="timeSettings">TIME SETTINGS</string>
+    <string name="alarmSettings">ALARM SETTINGS</string>
+    <string name="otherSettings">OTHER</string>
+
+    <string name="timeLeftNotification">Time left: </string>
 </resources>

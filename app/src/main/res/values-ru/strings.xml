@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EyesRelax</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Настройки</string>
+
+
+    <string name="pref_key_relax_period">relax period</string>
+    <string name="pref_key_work_period">work period</string>
+
+    <string name="pref_title_relax_period">Фаза отдыха</string>
+    <string name="pref_title_work_period">Фаза работы</string>
+
+    <string name="pref_key_start_on_boot">start on boot</string>
+    <string name="pref_title_start_on_boot">Запустить после перезагрузки</string>
+
+    <string name="pref_key_sound">sound settings</string>
+    <string name="pref_title_sound">Звуки</string>
+
+    <string name="pref_key_vibration">vibration settings</string>
+    <string name="pref_title_vibration">Вибрация</string>
+
+    <string name="pref_key_30s_notification">30s notification</string>
+    <string name="pref_title_30s_notification">Оповестить за 30 секунд до отдыха</string>
+
+    <string name="pref_key_pc_mode">enable PC mode</string>
+    <string name="pref_title_pc_mode">Включить ПК режим</string>
+
+
+    <string name="serviceTask">serviceTask</string>
+    <string name="startTask">start</string>
+    <string name="pauseTask">pause</string>
+    <string name="stopTask">stop</string>
+    <string name="resumeTask">resume</string>
+    <string name="timeString">timeSting</string>
+    <string name="stageSting">stageSting</string>
+    <string name="eyesRelaxSharedPref">eyesRelaxSharedPref</string>
+
+    <string name="workStageTitle">Работа с EyesRelax</string>
+    <string name="relaxStageTitle">Отдых…</string>
+    <string name="relaxStageMessage">Сделайте перерыв</string>
+    <string name="workStageMessage">EyesRelax начал работу</string>
+
+
+    <string name="prerelaxStageMessage">Приготовтесь к отдыху через 30 секунд</string>
+    <string name="prerelaxStageTitle">Приготовтесь к отдыху через 30 секунд</string>
+
+    <string name="workStage">WORK STAGE</string>
+    <string name="relaxStage">RELAX STAGE</string>
+    <string name="timeLeft">TIME LEFT:</string>
+
+
+    <string name="timeSettings">НАСТРОЙКИ ВРЕМЕНИ</string>
+    <string name="alarmSettings">ТИПЫ ОПОВЕЩЕНИЯ</string>
+    <string name="otherSettings">ДРУГИЕ</string>
+
+    <string name="timeLeftNotification">Осталось времени: </string>
+</resources>

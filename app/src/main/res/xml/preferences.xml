@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="TIME SETTINGS">
+    <PreferenceCategory android:title="@string/timeSettings">
         <com.voidgreen.eyesrelax.preferences.NumberPickerRelaxPreference
             android:defaultValue="5"
             android:key="@string/pref_key_relax_period"
@@ -19,7 +19,7 @@
         />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="ALARM SETTINGS">
+    <PreferenceCategory android:title="@string/alarmSettings">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_key_vibration"
@@ -32,7 +32,7 @@
         />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="OTHER">
+    <PreferenceCategory android:title="@string/otherSettings">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key_start_on_boot"
