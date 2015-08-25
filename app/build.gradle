@@ -8,13 +8,15 @@ android {
         applicationId "com.voidgreen.eyesrelax"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 8
-        versionName "1.7"
+        versionCode 9
+        versionName "1.8"
     }
 
     signingConfigs {
         release {
-            storeFile file("C:\\Users\\Void\\Google Drive\\other\\keystore\\binary_key_for_android.jks")
+            //storeFile file("C:\\Users\\Void\\Google Drive\\other\\keystore\\binary_key_for_android.jks")
+            storeFile file("/home/yaroslav/Android/keys/binary_key_for_android.jks")
+
             storePassword "Gyroscope2012"
             keyAlias "ReleaseKey"
             keyPassword "Gyroscope2012"
