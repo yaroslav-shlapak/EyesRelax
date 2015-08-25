@@ -56,4 +56,7 @@
     <string name="otherSettings">ДРУГИЕ</string>
 
     <string name="timeLeftNotification">Осталось времени: </string>
+
+    <string name="minutes"> минут</string>
+    <string name="seconds"> секунд</string>
 </resources>

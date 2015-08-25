@@ -1,6 +1,7 @@
 package com.voidgreen.eyesrelax;
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -41,13 +42,14 @@ public class EyesRelaxSettingsActivity extends PreferenceActivity implements Sha
     }
 
     private void updatePrefSummary(Preference p) {
+        Resources resources = getResources();
         if (p instanceof NumberPickerRelaxPreference) {
             NumberPickerRelaxPreference preference = (NumberPickerRelaxPreference) p;
-            p.setSummary(preference.VALUES[preference.getValue()] + " seconds");
+            p.setSummary(preference.VALUES[preference.getValue()] + " " + resources.getString(R.string.seconds));
         }
         if (p instanceof NumberPickerWorkPreference) {
             NumberPickerWorkPreference preference = (NumberPickerWorkPreference) p;
-            p.setSummary(preference.VALUES[preference.getValue()] + " minutes");
+            p.setSummary(preference.VALUES[preference.getValue()] + " " + resources.getString(R.string.minutes));
         }
     }
 

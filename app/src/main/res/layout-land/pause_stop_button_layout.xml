@@ -4,30 +4,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/pauseButton"
-        android:layout_width="@dimen/buttons_size"
-        android:layout_height="@dimen/buttons_size"
-        android:layout_alignParentBottom="true"
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/buttons_margin"
-        android:background="@drawable/button_pause"
+        android:layout_centerVertical="true">
 
-        android:text="Pause"
-        android:textColor="@color/white"
-        android:textSize="@dimen/buttons_text_size" />/>
+        <Button
+            android:id="@+id/pauseButton"
+            android:layout_width="@dimen/buttons_size"
+            android:layout_height="@dimen/buttons_size"
+            android:background="@drawable/button_pause"
 
-    <Button
-        android:id="@+id/stopButton"
-        android:layout_width="@dimen/buttons_size"
-        android:layout_height="@dimen/buttons_size"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/buttons_margin"
-        android:background="@drawable/button_stop"
+            android:text="Pause"
+            android:textColor="@color/white"
+            android:textSize="@dimen/buttons_text_size"
+            android:layout_below="@+id/stopButton"
+            android:layout_marginTop="@dimen/buttons_margin" />
 
-        android:text="Stop"
-        android:textColor="@color/white"
-        android:textSize="@dimen/buttons_text_size" />
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="@dimen/buttons_size"
+            android:layout_height="@dimen/buttons_size"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_stop"
+
+            android:text="Stop"
+            android:textColor="@color/white"
+            android:textSize="@dimen/buttons_text_size" />
+    </RelativeLayout>
 
 </RelativeLayout>

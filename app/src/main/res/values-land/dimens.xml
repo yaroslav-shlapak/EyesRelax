@@ -7,7 +7,7 @@
     <dimen name="progress_other_text_size">20sp</dimen>
     <dimen name="buttons_text_size">0sp</dimen>
     <dimen name="buttons_size">130dp</dimen>
-    <dimen name="buttons_margin">5dp</dimen>
+    <dimen name="buttons_margin">10dp</dimen>
     <dimen name="progress_width">350dp</dimen>
     <dimen name="progress_icon_height">30dp</dimen>
 </resources>

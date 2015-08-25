@@ -4,33 +4,37 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/pauseButton"
-        android:layout_width="@dimen/buttons_size"
-        android:layout_height="@dimen/buttons_size"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/buttons_margin"
-        android:layout_marginStart="@dimen/buttons_margin"
-        android:background="@drawable/button_pause"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
-        android:text="Pause"
-        android:textColor="@color/white"
-        android:textSize="@dimen/buttons_text_size" />/>
+        <Button
+            android:id="@+id/pauseButton"
+            android:layout_width="@dimen/buttons_size"
+            android:layout_height="@dimen/buttons_size"
+            android:background="@drawable/button_pause"
+            android:layout_centerVertical="true"
 
-    <Button
-        android:id="@+id/stopButton"
-        android:layout_width="@dimen/buttons_size"
-        android:layout_height="@dimen/buttons_size"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/buttons_margin"
-        android:layout_marginRight="@dimen/buttons_margin"
-        android:background="@drawable/button_stop"
-        android:text="Stop"
-        android:textColor="@color/white"
-        android:textSize="@dimen/buttons_text_size" />
+            android:text="Pause"
+            android:textColor="@color/white"
+            android:textSize="@dimen/buttons_text_size"
+
+            android:layout_marginTop="@dimen/buttons_margin" />
+
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="@dimen/buttons_size"
+            android:layout_height="@dimen/buttons_size"
+            android:layout_centerVertical="true"
+            android:background="@drawable/button_stop"
+            android:layout_toRightOf="@+id/pauseButton"
+            android:layout_marginLeft="@dimen/buttons_margin"
+
+            android:text="Stop"
+            android:textColor="@color/white"
+            android:textSize="@dimen/buttons_text_size" />
+    </RelativeLayout>
 
 </RelativeLayout>
