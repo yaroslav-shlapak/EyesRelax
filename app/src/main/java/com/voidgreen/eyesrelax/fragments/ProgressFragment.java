@@ -144,13 +144,13 @@ public class ProgressFragment extends Fragment {
             Context context = activity.getApplicationContext();
             switch (stage) {
                 case "work":
-                    imageView.setImageResource(R.drawable.eye_white_open_notification_large);
+                    //imageView.setImageResource(R.drawable.eye_white_open_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.red));
                     //mCircleView.setTextColor(getResources().getColor(R.color.red));
                     maxValue = SharedPrefUtility.getWorkTime(context) * Constants.MIN_TO_MILLIS_MULT;
                     break;
                 case "relax":
-                    imageView.setImageResource(R.drawable.eye_white_closed_notification_large);
+                    //imageView.setImageResource(R.drawable.eye_white_closed_notification_large);
                     mCircleView.setBarColor(getResources().getColor(R.color.green));
                     //mCircleView.setTextColor(getResources().getColor(R.color.green));
                     maxValue = SharedPrefUtility.getRelaxTime(context) * Constants.SEC_TO_MILLIS_MULT;
@@ -158,7 +158,7 @@ public class ProgressFragment extends Fragment {
                 default:
                     mCircleView.setTextColor(getResources().getColor(R.color.white));
                     maxValue = 0;
-                    imageView.setImageDrawable(null);
+                    //imageView.setImageDrawable(null);
             }
         }
     }
